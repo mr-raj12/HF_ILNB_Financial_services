@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
   Card,
@@ -34,10 +34,14 @@ export default function Dashboard() {
     //'manageGTT',
   ];
 
+  // useRef to track if session has been loaded already
+  const sessionFetched = useRef(false);
+
   useEffect(() => {
     const requestToken = searchParams.get('request_token');
-    if (requestToken) {
+    if (requestToken && !sessionFetched.current) {
       fetchSession(requestToken);
+      sessionFetched.current = true; // Prevent refetching the session
     } else {
       setLoading(false);
     }

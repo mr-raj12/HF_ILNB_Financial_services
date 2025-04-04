@@ -8,7 +8,8 @@ const nextConfig = {
   images: { 
     unoptimized: true,
     domains: ['images.unsplash.com']
-  }
+  },
+    reactStrictMode: true, // Enable React Strict Mode 
 };
 
 module.exports = nextConfig;
