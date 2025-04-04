@@ -85,7 +85,7 @@ export default function Dashboard() {
       let access_token = data.session.access_token;
       localStorage.setItem('zerodhaUserAT', JSON.stringify({  access_token }));
       setAccessToken(access_token);
-      //alert('Session fetched successfully! Access token stored in localStorage.');
+      alert('Session fetched successfully! Access token stored in localStorage.');
     } catch (err) {
       setError('Failed to fetch session. Please try again.');
     } finally {
@@ -94,7 +94,7 @@ export default function Dashboard() {
   }
 
   async function handleApiAction(action: string) {
-    //alert(`Calling ${action} API...`);
+    alert(`Calling ${action} API...`);
     
     
     
