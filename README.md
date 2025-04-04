@@ -61,8 +61,6 @@ This is a Next.js application that integrates with Zerodha's Kite Connect API fo
 ## Environment Variables
 
 - `DATABASE_URL`: PostgreSQL connection string
-- `NEXTAUTH_SECRET`: Secret for NextAuth.js
-- `NEXTAUTH_URL`: Your application URL
 
 ## Security Notes
 
