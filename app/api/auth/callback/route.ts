@@ -6,10 +6,10 @@ const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   try {
-    console.log('Received POST request');
+    //console.log('Received POST request');
 
-    const { requestToken } = await req.json();
-    console.log('Parsed request body:', { requestToken });
+    const { requestToken, apiKey, apiSecret } = await req.json();
+    //console.log('Parsed request body:', { requestToken });
 
     if (!requestToken) {
       console.error('requestToken is missing');
@@ -20,51 +20,45 @@ export async function POST(req: Request) {
     }
 
     // Fetch API credentials from DB
-    console.log('Fetching the last user from the database');
-    const lastUser = await prisma.user.findFirst({
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
+    //console.log('Fetching the last user from the database');
+    // const lastUser = await prisma.user.findFirst({
+    //   orderBy: {
+    //     createdAt: 'desc',
+    //   },
+    // });
 
-    if (!lastUser || !lastUser.apiKey || !lastUser.apiSecret) {
-      console.error('API key and secret not found for the last user');
-      return NextResponse.json(
-        { error: 'API key and secret not found for the last user' },
-        { status: 404 }
-      );
-    }
+    // if (!lastUser || !lastUser.apiKey || !lastUser.apiSecret) {
+    //   console.error('API key and secret not found for the last user');
+    //   return NextResponse.json(
+    //     { error: 'API key and secret not found for the last user' },
+    //     { status: 404 }
+    //   );
+    // }
 
-    console.log('Fetched last user:', lastUser);
+    // console.log('Fetched last user:', lastUser);
 
-    const { apiKey, apiSecret } = lastUser;
+    // const { apiKey, apiSecret } = lastUser;
     const kc = new KiteConnect({ api_key: apiKey });
-    console.log('Initialized KiteConnect instance');
+    //console.log('Initialized KiteConnect instance');
 
     // Generate session
-    console.log('Generating session with requestToken');
+    //console.log('Generating session with requestToken');
     const session = await kc.generateSession(requestToken, apiSecret);
-    console.log('Generated session:', session);
+    //console.log('Generated session:');
 
     kc.setAccessToken(session.access_token);
     
-    console.log('Set access token for KiteConnect');
+    //console.log('Set access token for KiteConnect');
 
-    // Store the access token in the database
-    await prisma.user.update({
-      where: { id: lastUser.id },
-      data: {
-        accessToken: session.access_token,
-        requestToken,
-      },
-    });
-    console.log('Stored access token in the database');
+  
+    //console.log('Stored access token in the database');
     // Fetch various data
-    console.log('Fetching data from KiteConnect API');
+    //console.log('Fetching data from KiteConnect API');
     return NextResponse.json(
       { session },
       { status: 200 }
     );
+    /*
     const [
       profile,
       funds,
@@ -133,6 +127,7 @@ export async function POST(req: Request) {
       historicalData,
       gtt,
     });
+    */
   } catch (error) {
     console.error('Zerodha auth error:', error);
     return NextResponse.json(

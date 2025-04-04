@@ -35,6 +35,7 @@ export default function LoginPage() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    
     setIsLoading(true);
     try {
       const response = await fetch('/api/auth/zerodha', {
@@ -50,7 +51,14 @@ export default function LoginPage() {
       }
 
       const data = await response.json();
+      let apiKey = data.apiKey;
+      let apiSecret = data.apiSecret;
+      //console.log('API Key:', apiKey);
+      //console.log('API Secret:', apiSecret);
+      localStorage.setItem('zerodhaCredentials', JSON.stringify({ apiKey, apiSecret }));
       window.location.href = data.loginUrl;
+
+
     } catch (error) {
       console.error('Authentication error:', error);
     } finally {

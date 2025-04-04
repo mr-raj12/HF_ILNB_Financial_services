@@ -13,6 +13,8 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { access } from 'node:fs';
+import { set } from 'date-fns';
 
 export default function Dashboard() {
   const searchParams = useSearchParams();
@@ -20,6 +22,9 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<any>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [apiKey, setApiKey] = useState<string | null>(null);
+  const [apiSecret, setApiSecret] = useState<string | null>(null);
 
   const apiActions = [
     'getProfile',
@@ -49,17 +54,38 @@ export default function Dashboard() {
 
   async function fetchSession(requestToken: string) {
     try {
+      const storedCredentials = localStorage.getItem('zerodhaCredentials');
+      if (storedCredentials) {
+        const { apiKey, apiSecret } = JSON.parse(storedCredentials);
+        if (apiKey && apiSecret) {
+          setApiKey(apiKey);
+          setApiSecret(apiSecret);
+          //console.log('Zerodha credentials loaded from localStorage:', { apiKey, apiSecret });
+        } else {
+          console.warn('Invalid Zerodha credentials in localStorage');
+        }
+      } else {
+        console.warn('No Zerodha credentials found in localStorage');
+      }
       const res = await fetch('/api/auth/callback', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ requestToken }),
+        body: JSON.stringify({ 
+          requestToken, 
+        apiKey: storedCredentials ? JSON.parse(storedCredentials).apiKey : undefined,
+        apiSecret: storedCredentials ? JSON.parse(storedCredentials).apiSecret : undefined
+        }),
       });
 
       if (!res.ok) throw new Error('Session fetch failed');
       const data = await res.json();
       setSession(data.session);
+      let access_token = data.session.access_token;
+      localStorage.setItem('zerodhaUserAT', JSON.stringify({  access_token }));
+      setAccessToken(access_token);
+      //alert('Session fetched successfully! Access token stored in localStorage.');
     } catch (err) {
       setError('Failed to fetch session. Please try again.');
     } finally {
@@ -68,10 +94,10 @@ export default function Dashboard() {
   }
 
   async function handleApiAction(action: string) {
-    if (!session?.access_token) {
-      setError('Access token not available');
-      return;
-    }
+    //alert(`Calling ${action} API...`);
+    
+    
+    
 
     try {
       console.log(`Calling API: ${action}`);
@@ -81,10 +107,13 @@ export default function Dashboard() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          access_token: session.access_token,
-          order_id: action === 'cancelOrder' ? 'order_id_here' : undefined, // placeholder
+          access_token: accessToken,
+          apiKey: apiKey
         }),
       });
+
+      // alert(`API call to ${action} completed!`);
+      // return;
 
       if (!res.ok) throw new Error(`Failed to fetch from ${action}`);
 

@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+// import { PrismaClient } from '@prisma/client';
 import { KiteConnect } from "kiteconnect";
 
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   try {
@@ -21,20 +21,20 @@ export async function POST(req: Request) {
 
     // Store credentials in database
     const currentTime = new Date().toISOString();
-    const email = `user_${currentTime.replace(/[:.]/g, '-')}@gmail.com`;
+    // const email = `user_${currentTime.replace(/[:.]/g, '-')}@gmail.com`;
 
-    await prisma.user.create({
-      data: {
-      email,
-      apiKey,
-      apiSecret,
-      },
-    });
+    // await prisma.user.create({
+    //   data: {
+    //   email,
+    //   apiKey,
+    //   apiSecret,
+    //   },
+    // });
 
     // Generate login URL
     const loginUrl = kite.getLoginURL();
 
-    return NextResponse.json({ loginUrl });
+    return NextResponse.json({ loginUrl, apiKey, apiSecret });
   } catch (error) {
     console.error('Zerodha auth error:', error);
     return NextResponse.json(
