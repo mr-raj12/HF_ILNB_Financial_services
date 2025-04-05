@@ -14,6 +14,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { set } from 'date-fns';
+import ChatbotWithToggle from './components/chatbot';
+import {motion} from "framer-motion";
 // import Dashboard from '../detail/page';
 
 // Define types for the data structures
@@ -455,6 +457,9 @@ function Dashboard() {
           </CardContent>
         </Card>
       )}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} transition={{ duration: 0.3 }}>
+        <ChatbotWithToggle />
+      </motion.div>
     </div>
   );
 }
