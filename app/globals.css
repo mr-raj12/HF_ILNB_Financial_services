@@ -73,6 +73,32 @@
   }
 }
 
+/* styles/themes.css */
+:root {
+  --primary-bg: #ffffff;
+  --primary-text: #000000;
+  --card-bg: #f5f5f5;
+  --accent: #E33F44; /* Default Zerodha */
+}
+
+body.zerodha-theme {
+  --primary-bg: #fff5f5;
+  --primary-text: #2e0507;
+  --card-bg: #E33F44;
+  --accent: #E33F44;
+}
+
+body.upstox-theme {
+  --primary-bg: #f3f0ff;
+  --primary-text: #1f1044;
+  --card-bg: #e5ddff;
+  --accent: #5724C9;
+}
+
+.transition-theme {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
 @layer base {
   * {
     @apply border-border;
