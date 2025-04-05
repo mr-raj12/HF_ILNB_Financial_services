@@ -17,6 +17,9 @@ import { set } from 'date-fns';
 import ChatbotWithToggle from './components/chatbot';
 import {motion} from "framer-motion";
 import { HoldingsCard } from './components/HoldingsCard';
+import {FundsCard} from './components/FundsCard';
+import {PositionsCard} from './components/PositionsCard';
+import {OrdersCard} from './components/OrdersCard';
 // import Dashboard from '../detail/page';
 
 // Define types for the data structures
@@ -133,7 +136,7 @@ function Dashboard() {
   };
 
   const sections: Section[] = [
-    { label: 'Profile', data: profileData?.profile, icon: <Briefcase className="h-4 w-4" /> },
+    // { label: 'Profile', data: profileData?.profile, icon: <Briefcase className="h-4 w-4" /> },
     { label: 'Funds', data: fundsData, icon: <BarChart2 className="h-4 w-4" /> },
     { label: 'Holdings', data: holdingsData, icon: <AlertCircle className="h-4 w-4" /> },
     { label: 'Positions', data: positionsData, icon: <AlertCircle className="h-4 w-4" /> },
@@ -377,20 +380,39 @@ function Dashboard() {
                             <h3 className="font-medium">{section.label} Data</h3>
                           </div>
                           <div className="p-4 bg-white overflow-x-auto">
-                            <pre className="text-sm text-gray-800 whitespace-pre-wrap">
-                            {/* {JSON.stringify(section.data, null, 2)} */}
-                                
-                                {section.label === "Holdings" ? (
-                                <>
-                                  {console.log(section.data)}
-                                  <HoldingsCard getholdings={section.data.profile} />
-                                </>
-                                ) : (
+                              {(() => {
+                              switch (section.label) {
+                                case 'Funds':
+                                  return (
+                                    <FundsCard getfunds={section.data.profile} />
+                                  );
+                                case 'Holdings':
+                                  return (
+                                    <HoldingsCard getholdings={section.data.profile} />
+                                  );
+                                case 'Positions':
+                                  return (
+                                    <PositionsCard positions={section.data.profile} />
+                                  );
+                                case 'Orders':
+                                  return (
+                                    <OrdersCard orders={section.data.profile} />
+                                  );
+                                default:
+                                  return (
+                                    <pre className="text-sm text-gray-800 whitespace-pre-wrap">
+                                      {JSON.stringify(section.data, null, 2)}
+                                    </pre>
+                                  );
+                              }
+                              })()}
+                              {section.label === 'Profile' && (
                                 <pre className="text-sm text-gray-800 whitespace-pre-wrap">
                                   {JSON.stringify(section.data, null, 2)}
                                 </pre>
-                                )}
-                            </pre>
+                              )}
+                            
+                                
                           </div>
                         </div>
                       </TabsContent>
