@@ -12,11 +12,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle, Briefcase, BarChart2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from "@/components/ui/badge";
-import AvailableActionsCard from './components/AvailableActionsCard';
 import { motion } from "framer-motion";
 import { useState } from 'react';
 // Static Data
-// const profileData = { /* ...as you defined */ };
+// const profileData.profile = { /* ...as you defined */ };
 // const fundsData = { /* ...as you defined */ };
 // const holdingsData = { /* ...as you defined */ };
 // const positionsData = { /* ...as you defined */ };
@@ -168,7 +167,7 @@ export default function Dashboard() {
   const [visibleSection, setVisibleSection] = useState<string | null>(null);
 
   const sections = [
-    { label: 'Profile', data: profileData },
+    { label: 'Profile', data: profileData.profile },
     { label: 'Funds', data: fundsData },
     { label: 'Holdings', data: holdingsData },
     { label: 'Positions', data: positionsData },
@@ -176,34 +175,148 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="p-4 space-y-4">
-      <div className="flex flex-wrap gap-2">
-        {sections.map((section) => (
-          <button
-            key={section.label}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition"
-            onClick={() =>
-              setVisibleSection(
-                visibleSection === section.label ? null : section.label
-              )
-            }
-          >
-            {section.label}
-          </button>
-        ))}
-      </div>
+    <div className="max-w-7xl mx-auto p-6 space-y-6">
+          {profileData.profile && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 font-inter">
+              {/* USER CARD */}
+              <Card className="col-span-full bg-gradient-to-br from-[#007aff] to-[#0061d5] text-white shadow-lg rounded-xl overflow-hidden transition-all hover:shadow-2xl">
+                <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-4">
+                  {/* Left: Avatar + Info */}
+                  <div className="flex items-center gap-5">
+                    <div className="relative">
+                    {profileData.profile.avatar_url ? (
+                      <img
+                        src={profileData.profile.avatar_url}
+                        alt="User Avatar"
+                        className="w-20 h-20 rounded-full object-cover shadow-md border-2 border-white"
+                      />
+                    ) : (
+                      <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center text-3xl font-bold shadow-md border-2 border-white">
+                        {profileData.profile.user_shortname?.charAt(0).toUpperCase() || 'U'}
+                      </div>
+                    )}
+                      <span className="absolute bottom-1 right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full" />
+                    </div>
 
-      {sections.map(
-        (section) =>
-          visibleSection === section.label && (
-            <div key={section.label}>
-              <h2 className="text-xl font-bold mt-4 mb-2">{section.label}</h2>
-              <pre className="bg-gray-100 p-4 rounded overflow-x-auto text-sm">
-                {JSON.stringify(section.data, null, 2)}
-              </pre>
+                    <div>
+                      <CardTitle className="text-2xl font-semibold">
+                        {profileData.profile.user_name || profileData.profile.user_shortname || 'Welcome User'}
+                      </CardTitle>
+
+                      <CardDescription className="text-white/80 text-sm mt-2 space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span>Client ID:</span>
+                          <div className="flex items-center gap-1">
+                            <code className="bg-white/10 px-2 py-0.5 rounded text-xs font-mono">
+                              {profileData.profile.user_id}
+                            </code>
+                            <button
+                              onClick={() => navigator.clipboard.writeText(profileData.profile.user_id)}
+                              className="text-white/60 hover:text-white transition"
+                              title="Copy Client ID"
+                            >
+                              📋
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <span>Email:</span>
+                          <span className="truncate max-w-[200px]">{profileData.profile.email}</span>
+                        </div>
+                      </CardDescription>
+                    </div>
+                  </div>
+
+                  {/* Right: Broker Badge with Logo */}
+                  <div className="flex items-center gap-2 mt-2 md:mt-0">
+                      <h1 className="text-2xl font-semibold">{profileData.profile.broker}</h1>
+                  </div>
+                </CardHeader>
+              </Card>
+
+              {/* TRADING ACCESS */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg font-medium flex items-center gap-2">
+                    <Briefcase className="h-5 w-5" /> Trading Access
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="text-sm font-medium mb-2">Exchanges</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {profileData.profile.exchanges.map((exchange: string) => (
+                          <Badge key={exchange} variant="outline">
+                            {exchange}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium mb-2">Products</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {profileData.profile.products.map((product: string) => (
+                          <Badge key={product} variant="outline">
+                            {product}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* ORDER TYPES */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg font-medium flex items-center gap-2">
+                    <BarChart2 className="h-5 w-5" /> Order Types
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {profileData.profile.order_types.map((type: string) => (
+                      <Badge key={type} variant="secondary">
+                        {type}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
             </div>
-          )
-      )}
+          )}
+
+      <div className="p-4 space-y-4">
+        <div className="flex flex-wrap gap-2">
+          {sections.map((section) => (
+            <button
+              key={section.label}
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition"
+              onClick={() =>
+                setVisibleSection(
+                  visibleSection === section.label ? null : section.label
+                )
+              }
+            >
+              {section.label}
+            </button>
+          ))}
+        </div>
+
+        {sections.map(
+          (section) =>
+            visibleSection === section.label && (
+              <div key={section.label}>
+                <h2 className="text-xl font-bold mt-4 mb-2">{section.label}</h2>
+                <pre className="bg-gray-100 p-4 rounded overflow-x-auto text-sm">
+                  {JSON.stringify(section.data, null, 2)}
+                </pre>
+              </div>
+            )
+        )}
+      </div>
     </div>
   );
 }
