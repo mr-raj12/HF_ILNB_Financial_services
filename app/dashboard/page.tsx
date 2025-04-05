@@ -169,6 +169,7 @@ export default function Dashboard() {
   const [visibleSection, setVisibleSection] = useState<string | null>(null);
 
   const [selectedBroker, setSelectedBroker] = useState<'Zerodha' | 'Upstox'>('Zerodha');
+  const [upstoxUserInfo, setUpstoxUserInfo] = useState<any>(null);
 
   const sections = [
     { label: 'Profile', data: profileData.profile },
@@ -178,6 +179,46 @@ export default function Dashboard() {
     { label: 'Orders', data: ordersData },
   ];
 
+  const UserInfo = async () => {
+    try {
+      const accessToken = localStorage.getItem("upstoxCredentials");
+  
+      if (!accessToken) {
+        alert("No access token found");
+        return null;
+      }
+  
+      const response = await fetch("/api/upstox/getUser", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ access_token: accessToken }),
+      });
+
+      // const { status } = await response.json();
+      // if (status !== 'success') {
+      //   alert("Failed to fetch user info");
+      //   return null;
+      // }
+
+      const data = await response.json();
+      
+      
+  
+      console.log("User Info:", data);
+      setUpstoxUserInfo(data);
+      return data;
+      
+    } catch (error) {
+      console.error("Error fetching user info:", error);
+      alert("An error occurred while fetching user info");
+      return null;
+    }
+  };
+  
+
+  
   return (
     <div className="max-w-7xl mx-auto p-2 space-y-6">
       <ThemeWrapper selectedBroker={selectedBroker} />
@@ -188,8 +229,8 @@ export default function Dashboard() {
             onClick={() => setSelectedBroker("Zerodha")}
             className={`w-1/2 py-2 text-lg font-semibold border-b-4 transition-all duration-300 flex items-center justify-center gap-2 ${
               selectedBroker === "Zerodha"
-                ? 'bg-[#E33F44] text-white border-[#E33F44]'
-                : 'bg-white text-gray-700 border-transparent hover:bg-gray-100'
+                ? "bg-[#E33F44] text-white border-[#E33F44]"
+                : "bg-white text-gray-700 border-transparent hover:bg-gray-100"
             }`}
           >
             <img src="/icons/zerodha.svg" alt="Zerodha" className="h-5 w-5" />
@@ -199,8 +240,8 @@ export default function Dashboard() {
             onClick={() => setSelectedBroker("Upstox")}
             className={`w-1/2 py-2 text-lg font-semibold border-b-4 transition-all duration-300 flex items-center justify-center gap-2 ${
               selectedBroker === "Upstox"
-                ? 'bg-[#5724C9] text-white border-[#5724C9]'
-                : 'bg-white text-gray-700 border-transparent hover:bg-gray-100'
+                ? "bg-[#5724C9] text-white border-[#5724C9]"
+                : "bg-white text-gray-700 border-transparent hover:bg-gray-100"
             }`}
           >
             <img src="/icons/upstox.svg" alt="Upstox" className="h-5 w-5" />
@@ -208,6 +249,8 @@ export default function Dashboard() {
           </button>
         </div>
       </Card>
+
+
       {selectedBroker === "Zerodha" && profileData.profile && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 font-inter">
           {/* USER CARD */}
@@ -216,29 +259,31 @@ export default function Dashboard() {
               {/* Left: Avatar + Info */}
               <div className="flex items-center gap-5">
                 <div className="relative">
-                {profileData.profile.avatar_url ? (
-                  <img
-                    src={profileData.profile.avatar_url}
-                    alt="User Avatar"
-                    className="w-20 h-20 rounded-full object-cover shadow-md border-2 border-white"
-                  />
-                ) : (
-                  <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center text-3xl font-bold shadow-md border-2 border-white">
-                    {profileData.profile.user_name
-                      ? profileData.profile.user_name
-                          .split(' ')
-                          .map((n) => n[0])
-                          .join('')
-                          .toUpperCase()
-                      : 'U'}
-                  </div>
-                )}
+                  {profileData.profile.avatar_url ? (
+                    <img
+                      src={profileData.profile.avatar_url}
+                      alt="User Avatar"
+                      className="w-20 h-20 rounded-full object-cover shadow-md border-2 border-white"
+                    />
+                  ) : (
+                    <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center text-3xl font-bold shadow-md border-2 border-white">
+                      {profileData.profile.user_name
+                        ? profileData.profile.user_name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")
+                            .toUpperCase()
+                        : "U"}
+                    </div>
+                  )}
                   <span className="absolute bottom-1 right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full" />
                 </div>
 
                 <div>
                   <CardTitle className="text-2xl font-semibold">
-                    {profileData.profile.user_name || profileData.profile.user_shortname || 'Welcome User'}
+                    {profileData.profile.user_name ||
+                      profileData.profile.user_shortname ||
+                      "Welcome User"}
                   </CardTitle>
 
                   <CardDescription className="text-white/80 text-sm mt-2 space-y-1">
@@ -249,7 +294,11 @@ export default function Dashboard() {
                           {profileData.profile.user_id}
                         </code>
                         <button
-                          onClick={() => navigator.clipboard.writeText(profileData.profile.user_id)}
+                          onClick={() =>
+                            navigator.clipboard.writeText(
+                              profileData.profile.user_id
+                            )
+                          }
                           className="text-white/60 hover:text-white transition"
                           title="Copy Client ID"
                         >
@@ -260,7 +309,9 @@ export default function Dashboard() {
 
                     <div className="flex items-center gap-2">
                       <span>Email:</span>
-                      <span className="truncate max-w-[200px]">{profileData.profile.email}</span>
+                      <span className="truncate max-w-[200px]">
+                        {profileData.profile.email}
+                      </span>
                     </div>
                   </CardDescription>
                 </div>
@@ -268,7 +319,9 @@ export default function Dashboard() {
 
               {/* Right: Broker Badge with Logo */}
               <div className="flex items-center gap-2 mt-2 md:mt-0">
-                  <h1 className="text-2xl font-semibold">{profileData.profile.broker}</h1>
+                <h1 className="text-2xl font-semibold">
+                  {profileData.profile.broker}
+                </h1>
               </div>
             </CardHeader>
           </Card>
@@ -323,38 +376,88 @@ export default function Dashboard() {
               </div>
             </CardContent>
           </Card>
+
+          <div>
+            <div className="p-4 space-y-4">
+              <div className="flex flex-wrap gap-2">
+                {sections.map((section) => (
+                  <button
+                    key={section.label}
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition"
+                    onClick={() =>
+                      setVisibleSection(
+                        visibleSection === section.label ? null : section.label
+                      )
+                    }
+                  >
+                    {section.label}
+                  </button>
+                ))}
+              </div>
+
+              {sections.map(
+                (section) =>
+                  visibleSection === section.label && (
+                    <div key={section.label}>
+                      <h2 className="text-xl font-bold mt-4 mb-2">
+                        {section.label}
+                      </h2>
+                      <pre className="bg-gray-100 p-4 rounded overflow-x-auto text-sm">
+                        {JSON.stringify(section.data, null, 2)}
+                      </pre>
+                    </div>
+                  )
+              )}
+            </div>
+          </div>
         </div>
       )}
 
-      <div className="p-4 space-y-4">
-        <div className="flex flex-wrap gap-2">
-          {sections.map((section) => (
-            <button
-              key={section.label}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition"
-              onClick={() =>
-                setVisibleSection(
-                  visibleSection === section.label ? null : section.label
-                )
-              }
-            >
-              {section.label}
-            </button>
-          ))}
-        </div>
+      {selectedBroker === "Upstox" && (
+        <div>
+          {localStorage.getItem("upstoxCredentials") ? (
+            <div className="mt-4 p-4 bg-gray-100 rounded shadow">
+              <h2 className="text-lg font-bold mb-2">
+                Stored Upstox Credentials
+              </h2>
+              <pre className="text-sm">
+                {localStorage.getItem("upstoxCredentials")}
+              </pre>
 
-        {sections.map(
-          (section) =>
-            visibleSection === section.label && (
-              <div key={section.label}>
-                <h2 className="text-xl font-bold mt-4 mb-2">{section.label}</h2>
-                <pre className="bg-gray-100 p-4 rounded overflow-x-auto text-sm">
-                  {JSON.stringify(section.data, null, 2)}
-                </pre>
-              </div>
-            )
-        )}
-      </div>
+                <button
+                onClick={UserInfo}
+                className="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition"
+                >
+                UserInfo
+                </button>
+                {upstoxUserInfo && (
+                  <div className="mt-4 p-4 bg-green-100 border-l-4 border-green-500 text-green-700 rounded shadow">
+                    <h2 className="text-lg font-bold mb-2">Upstox User Info</h2>
+                    <pre className="text-sm">
+                      {JSON.stringify(upstoxUserInfo, null, 2)}
+                    </pre>
+                  </div>
+                )}
+            </div>
+          ) : (
+            <div className="mt-4 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded shadow">
+              <h2 className="text-lg font-semibold mb-2">
+                No Access Token Available
+              </h2>
+              <p>
+                Please{" "}
+                <a
+                  href="/login"
+                  className="underline text-blue-600 hover:text-blue-800"
+                >
+                  login
+                </a>{" "}
+                to connect your Upstox account.
+              </p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
