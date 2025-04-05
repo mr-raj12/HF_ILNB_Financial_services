@@ -17,6 +17,12 @@ import {
   Pie,
   Cell,
 } from 'recharts';
+import {
+  Tooltip as RadixTooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface Position {
   tradingsymbol: string;
@@ -113,10 +119,24 @@ export function PositionsCard({ positions }: PositionsProps) {
         transition={{ duration: 0.3 }}
       >
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2 md:mb-0">Portfolio Performance</h2>
+          <div className="flex items-center space-x-2">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2 md:mb-0">Portfolio Performance</h2>
+          </div>
           <div className="flex flex-wrap gap-4">
             <div className="flex items-center space-x-2 bg-blue-50 dark:bg-blue-900/20 px-3 py-2 rounded-lg">
-              <span className="text-base font-medium text-gray-600 dark:text-gray-400">Total P&L:</span>
+              <div className="flex items-center space-x-1">
+                <span className="text-base font-medium text-gray-600 dark:text-gray-400">Total P&L:</span>
+                <TooltipProvider>
+                  <RadixTooltip>
+                    <TooltipTrigger>
+                      <span className="text-gray-500 dark:text-gray-400 cursor-help">ℹ️</span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Combined profit or loss from all your positions</p>
+                    </TooltipContent>
+                  </RadixTooltip>
+                </TooltipProvider>
+              </div>
               <span 
                 className={`text-lg font-bold ${isProfit ? 'text-green-600 dark:text-green-500' : 'text-red-600 dark:text-red-500'}`}
               >
@@ -129,13 +149,37 @@ export function PositionsCard({ positions }: PositionsProps) {
               </span>
             </div>
             <div className="flex items-center space-x-2 bg-purple-50 dark:bg-purple-900/20 px-3 py-2 rounded-lg">
-              <span className="text-base font-medium text-gray-600 dark:text-gray-400">Unrealised:</span>
+              <div className="flex items-center space-x-1">
+                <span className="text-base font-medium text-gray-600 dark:text-gray-400">Unrealised:</span>
+                <TooltipProvider>
+                  <RadixTooltip>
+                    <TooltipTrigger>
+                      <span className="text-gray-500 dark:text-gray-400 cursor-help">ℹ️</span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Paper profits or losses from current open positions</p>
+                    </TooltipContent>
+                  </RadixTooltip>
+                </TooltipProvider>
+              </div>
               <span className="text-lg font-bold text-purple-600 dark:text-purple-500">
                 ₹{totalUnrealised.toFixed(2)}
               </span>
             </div>
             <div className="flex items-center space-x-2 bg-amber-50 dark:bg-amber-900/20 px-3 py-2 rounded-lg">
-              <span className="text-base font-medium text-gray-600 dark:text-gray-400">Realised:</span>
+              <div className="flex items-center space-x-1">
+                <span className="text-base font-medium text-gray-600 dark:text-gray-400">Realised:</span>
+                <TooltipProvider>
+                  <RadixTooltip>
+                    <TooltipTrigger>
+                      <span className="text-gray-500 dark:text-gray-400 cursor-help">ℹ️</span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Actual profits or losses from closed positions</p>
+                    </TooltipContent>
+                  </RadixTooltip>
+                </TooltipProvider>
+              </div>
               <span className="text-lg font-bold text-amber-600 dark:text-amber-500">
                 ₹{totalRealised.toFixed(2)}
               </span>
@@ -145,7 +189,9 @@ export function PositionsCard({ positions }: PositionsProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">P&L Distribution</h3>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">P&L Distribution</h3>
+            </div>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData}>

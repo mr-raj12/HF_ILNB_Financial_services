@@ -3,6 +3,12 @@
 import { CheckCircleIcon, XCircleIcon, ClockIcon } from '@heroicons/react/24/solid';
 import { motion } from 'framer-motion';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, CartesianGrid, XAxis, YAxis, Bar } from 'recharts';
+import {
+  Tooltip as RadixTooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface Order {
   account_id: string;
@@ -124,28 +130,88 @@ export function OrdersCard({ orders }: OrdersProps) {
         transition={{ duration: 0.3 }}
       >
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2 md:mb-0">Order History</h2>
+          <div className="flex items-center space-x-2">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2 md:mb-0">Order History</h2>
+            <TooltipProvider>
+              <RadixTooltip>
+                <TooltipTrigger>
+                  <span className="text-gray-500 dark:text-gray-400 cursor-help">ℹ️</span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Overview of your recent orders and their current status</p>
+                </TooltipContent>
+              </RadixTooltip>
+            </TooltipProvider>
+          </div>
           <div className="flex flex-wrap gap-4">
             <div className="flex items-center space-x-2 bg-blue-50 dark:bg-blue-900/20 px-3 py-2 rounded-lg">
-              <span className="text-base font-medium text-gray-600 dark:text-gray-400">Total:</span>
+              <div className="flex items-center space-x-1">
+                <span className="text-base font-medium text-gray-600 dark:text-gray-400">Total:</span>
+                <TooltipProvider>
+                  <RadixTooltip>
+                    <TooltipTrigger>
+                      <span className="text-gray-500 dark:text-gray-400 cursor-help">ℹ️</span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Total number of orders placed in the current trading session</p>
+                    </TooltipContent>
+                  </RadixTooltip>
+                </TooltipProvider>
+              </div>
               <span className="text-lg font-bold text-blue-600 dark:text-blue-500">
                 {totalOrders}
               </span>
             </div>
             <div className="flex items-center space-x-2 bg-green-50 dark:bg-green-900/20 px-3 py-2 rounded-lg">
-              <span className="text-base font-medium text-gray-600 dark:text-gray-400">Completed:</span>
+              <div className="flex items-center space-x-1">
+                <span className="text-base font-medium text-gray-600 dark:text-gray-400">Completed:</span>
+                <TooltipProvider>
+                  <RadixTooltip>
+                    <TooltipTrigger>
+                      <span className="text-gray-500 dark:text-gray-400 cursor-help">ℹ️</span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Orders that have been successfully executed and completed</p>
+                    </TooltipContent>
+                  </RadixTooltip>
+                </TooltipProvider>
+              </div>
               <span className="text-lg font-bold text-green-600 dark:text-green-500">
                 {completedOrders}
               </span>
             </div>
             <div className="flex items-center space-x-2 bg-amber-50 dark:bg-amber-900/20 px-3 py-2 rounded-lg">
-              <span className="text-base font-medium text-gray-600 dark:text-gray-400">Pending:</span>
+              <div className="flex items-center space-x-1">
+                <span className="text-base font-medium text-gray-600 dark:text-gray-400">Pending:</span>
+                <TooltipProvider>
+                  <RadixTooltip>
+                    <TooltipTrigger>
+                      <span className="text-gray-500 dark:text-gray-400 cursor-help">ℹ️</span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Orders that are still waiting to be executed or are in process</p>
+                    </TooltipContent>
+                  </RadixTooltip>
+                </TooltipProvider>
+              </div>
               <span className="text-lg font-bold text-amber-600 dark:text-amber-500">
                 {pendingOrders}
               </span>
             </div>
             <div className="flex items-center space-x-2 bg-red-50 dark:bg-red-900/20 px-3 py-2 rounded-lg">
-              <span className="text-base font-medium text-gray-600 dark:text-gray-400">Cancelled:</span>
+              <div className="flex items-center space-x-1">
+                <span className="text-base font-medium text-gray-600 dark:text-gray-400">Cancelled:</span>
+                <TooltipProvider>
+                  <RadixTooltip>
+                    <TooltipTrigger>
+                      <span className="text-gray-500 dark:text-gray-400 cursor-help">ℹ️</span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Orders that were cancelled before execution</p>
+                    </TooltipContent>
+                  </RadixTooltip>
+                </TooltipProvider>
+              </div>
               <span className="text-lg font-bold text-red-600 dark:text-red-500">
                 {cancelledOrders}
               </span>
@@ -155,7 +221,19 @@ export function OrdersCard({ orders }: OrdersProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Order Status Distribution</h3>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Order Status Distribution</h3>
+              <TooltipProvider>
+                <RadixTooltip>
+                  <TooltipTrigger>
+                    <span className="text-gray-500 dark:text-gray-400 cursor-help">ℹ️</span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Visual breakdown of your orders by their current status</p>
+                  </TooltipContent>
+                </RadixTooltip>
+              </TooltipProvider>
+            </div>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>

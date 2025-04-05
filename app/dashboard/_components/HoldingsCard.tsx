@@ -14,7 +14,26 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
+  LineChart,
+  Line,
 } from 'recharts';
+import {
+  Tooltip as RadixTooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer"
 
 interface Holding {
   tradingsymbol: string;
@@ -54,8 +73,6 @@ interface HoldingsProps {
   getholdings: Holding[];
 }
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
-
 export function HoldingsCard({ getholdings }: HoldingsProps) {
   if (!getholdings || !Array.isArray(getholdings) || getholdings.length === 0) {
     return (
@@ -80,22 +97,20 @@ export function HoldingsCard({ getholdings }: HoldingsProps) {
   const chartData = getholdings.map((holding) => ({
     name: holding.tradingsymbol,
     value: holding.quantity * holding.last_price,
+    pnl: holding.pnl,
+    dayChange: holding.day_change,
+    dayChangePercentage: holding.day_change_percentage,
   }));
 
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
+  const performanceData = getholdings.map((holding) => ({
+    name: holding.tradingsymbol,
+    value: holding.quantity * holding.last_price,
+    pnl: holding.pnl,
+    dayChange: holding.day_change,
+    dayChangePercentage: holding.day_change_percentage,
+  }));
 
-  const item = {
-    hidden: { opacity: 0 },
-    show: { opacity: 1 }
-  };
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
   return (
     <div className="space-y-6">
@@ -107,18 +122,54 @@ export function HoldingsCard({ getholdings }: HoldingsProps) {
       >
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Portfolio Holdings</h2>
+            <div className="flex items-center space-x-2">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">Portfolio Holdings</h2>
+              <TooltipProvider>
+                <RadixTooltip>
+                  <TooltipTrigger>
+                    <span className="text-gray-500 dark:text-gray-400 cursor-help">ℹ️</span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Your current investment portfolio showing all your stock holdings and their performance</p>
+                  </TooltipContent>
+                </RadixTooltip>
+              </TooltipProvider>
+            </div>
             <p className="text-sm text-gray-500 dark:text-gray-400">Your current investment portfolio</p>
           </div>
           <div className="flex flex-col md:flex-row items-start md:items-center space-y-2 md:space-y-0 md:space-x-6 mt-4 md:mt-0">
             <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 px-4 py-2 rounded-lg">
-              <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Value</span>
+              <div className="flex items-center space-x-1">
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Value</span>
+                <TooltipProvider>
+                  <RadixTooltip>
+                    <TooltipTrigger>
+                      <span className="text-gray-500 dark:text-gray-400 cursor-help">ℹ️</span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Current market value of all your holdings</p>
+                    </TooltipContent>
+                  </RadixTooltip>
+                </TooltipProvider>
+              </div>
               <span className="text-lg font-bold text-gray-900 dark:text-white">
                 ₹{totalValue.toFixed(2)}
               </span>
             </div>
             <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 px-4 py-2 rounded-lg">
-              <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Total P&L</span>
+              <div className="flex items-center space-x-1">
+                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Total P&L</span>
+                <TooltipProvider>
+                  <RadixTooltip>
+                    <TooltipTrigger>
+                      <span className="text-gray-500 dark:text-gray-400 cursor-help">ℹ️</span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Total profit or loss from your holdings based on purchase price</p>
+                    </TooltipContent>
+                  </RadixTooltip>
+                </TooltipProvider>
+              </div>
               <span 
                 className={`text-lg font-bold ${isProfit ? 'text-green-600 dark:text-green-500' : 'text-red-600 dark:text-red-500'}`}
               >
@@ -135,7 +186,19 @@ export function HoldingsCard({ getholdings }: HoldingsProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4">
-            <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Portfolio Distribution</h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Portfolio Distribution</h3>
+              <TooltipProvider>
+                <RadixTooltip>
+                  <TooltipTrigger>
+                    <span className="text-gray-500 dark:text-gray-400 cursor-help">ℹ️</span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Visual breakdown of your portfolio showing the percentage allocation of each holding</p>
+                  </TooltipContent>
+                </RadixTooltip>
+              </TooltipProvider>
+            </div>
             <div className="h-72">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -176,15 +239,13 @@ export function HoldingsCard({ getholdings }: HoldingsProps) {
           </div>
 
           <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4">
-            <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Holdings Value & P&L</h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Performance Overview</h3>
+            </div>
             <div className="h-72">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
-                  data={getholdings.map(holding => ({
-                    name: holding.tradingsymbol,
-                    value: holding.quantity * holding.last_price,
-                    pnl: holding.pnl
-                  }))}
+                  data={performanceData}
                   margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
@@ -208,65 +269,70 @@ export function HoldingsCard({ getholdings }: HoldingsProps) {
             </div>
           </div>
         </div>
-      </motion.div>
 
-      <motion.div
-        className="space-y-4"
-        variants={container}
-        initial="hidden"
-        animate="show"
-      >
-        {getholdings.map((holding) => (
-          <motion.div
-            key={holding.tradingsymbol}
-            className="border border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all duration-200 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md"
-            variants={item}
-            whileHover={{ scale: 1.01 }}
-          >
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
-              <div className="space-y-2">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{holding.tradingsymbol}</h3>
-                <div className="flex flex-wrap items-center gap-4">
-                  <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 px-3 py-1 rounded-lg">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Quantity</span>
-                    <span className="font-medium text-gray-900 dark:text-white">{holding.quantity}</span>
+        <div className="mt-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Detailed Holdings</h3>
+          <div className="space-y-4">
+            {getholdings.map((holding) => {
+              const holdingValue = holding.quantity * holding.last_price;
+              const holdingPnL = holding.pnl;
+              const isHoldingProfit = holdingPnL >= 0;
+              const dayChangePercentage = holding.day_change_percentage;
+
+              return (
+                <motion.div
+                  key={holding.tradingsymbol}
+                  className="border border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all duration-200 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  
+                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
+                    <div className="space-y-2">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{holding.tradingsymbol}</h3>
+                      <div className="flex flex-wrap items-center gap-4">
+                        <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 px-3 py-1 rounded-lg">
+                          <span className="text-sm text-gray-600 dark:text-gray-400">Quantity</span>
+                          <span className="font-medium text-gray-900 dark:text-white">{holding.quantity}</span>
+                        </div>
+                        <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 px-3 py-1 rounded-lg">
+                          <span className="text-sm text-gray-600 dark:text-gray-400">Avg Price</span>
+                          <span className="font-medium text-gray-900 dark:text-white">₹{holding.average_price.toFixed(2)}</span>
+                        </div>
+                        <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 px-3 py-1 rounded-lg">
+                          <span className="text-sm text-gray-600 dark:text-gray-400">LTP</span>
+                          <span className="font-medium text-gray-900 dark:text-white">₹{holding.last_price.toFixed(2)}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-end space-y-1">
+                      <div className="flex items-center space-x-2">
+                        <span 
+                          className={`text-lg font-bold ${
+                            isHoldingProfit ? 'text-green-600 dark:text-green-500' : 'text-red-600 dark:text-red-500'
+                          }`}
+                        >
+                          {isHoldingProfit ? (
+                            <ArrowTrendingUpIcon className="h-5 w-5 inline mr-1" />
+                          ) : (
+                            <ArrowTrendingDownIcon className="h-5 w-5 inline mr-1" />
+                          )}
+                          ₹{holdingPnL.toFixed(2)}
+                        </span>
+                      </div>
+                      <span className={`text-sm font-medium ${
+                        dayChangePercentage >= 0 ? 'text-green-600 dark:text-green-500' : 'text-red-600 dark:text-red-500'
+                      }`}>
+                        {dayChangePercentage >= 0 ? '+' : ''}{dayChangePercentage.toFixed(2)}%
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 px-3 py-1 rounded-lg">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Avg Price</span>
-                    <span className="font-medium text-gray-900 dark:text-white">₹{holding.average_price.toFixed(2)}</span>
-                  </div>
-                  <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 px-3 py-1 rounded-lg">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">LTP</span>
-                    <span className="font-medium text-gray-900 dark:text-white">₹{holding.last_price.toFixed(2)}</span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col items-end space-y-1">
-                <div className="flex items-center space-x-2">
-                  <span 
-                    className={`text-lg font-bold ${
-                      holding.pnl >= 0 ? 'text-green-600 dark:text-green-500' : 'text-red-600 dark:text-red-500'
-                    }`}
-                  >
-                    {holding.pnl >= 0 ? (
-                      <ArrowTrendingUpIcon className="h-5 w-5 inline mr-1" />
-                    ) : (
-                      <ArrowTrendingDownIcon className="h-5 w-5 inline mr-1" />
-                    )}
-                    ₹{holding.pnl.toFixed(2)}
-                  </span>
-                </div>
-                <span className={`text-sm font-medium ${
-                  holding.pnl >= 0 ? 'text-green-600 dark:text-green-500' : 'text-red-600 dark:text-red-500'
-                }`}>
-                  {holding.pnl >= 0 
-                    ? `+${((holding.pnl / (holding.average_price * holding.quantity)) * 100).toFixed(2)}%` 
-                    : `${((holding.pnl / (holding.average_price * holding.quantity)) * 100).toFixed(2)}%`}
-                </span>
-              </div>
-            </div>
-          </motion.div>
-        ))}
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
       </motion.div>
     </div>
   );

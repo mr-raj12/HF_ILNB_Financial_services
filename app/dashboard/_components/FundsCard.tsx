@@ -11,6 +11,12 @@ import {
   ResponsiveContainer,
   Legend,
 } from 'recharts';
+import {
+  Tooltip as RadixTooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface Margin {
   equity: {
@@ -210,34 +216,61 @@ export function FundsCard({ getfunds }: FundsProps) {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
           <div className="flex items-center space-x-2">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">💰 Funds Overview</h2>
-            <div className="tooltip" data-tip="Total available funds across all segments including equity and commodity. This represents your total investable capital.">
-              <span className="text-gray-500 dark:text-gray-400 cursor-help">ℹ️</span>
-            </div>
           </div>
           <div className="flex flex-wrap gap-4 mt-4 md:mt-0">
             <div className="flex items-center space-x-2 bg-green-50 dark:bg-green-900/20 px-4 py-3 rounded-lg shadow-sm">
-              <span className="text-base font-medium text-gray-600 dark:text-gray-400">Available:</span>
-              <div className="tooltip" data-tip="The total amount of funds available for trading, including cash, collateral, and adhoc margin. This is your current trading power.">
-                <span className="text-lg font-bold text-green-600 dark:text-green-500">
-                  ₹{totalAvailable.toFixed(2)}
-                </span>
+              <div className="flex items-center space-x-1">
+                <span className="text-base font-medium text-gray-600 dark:text-gray-400">Available:</span>
+                <TooltipProvider>
+                  <RadixTooltip>
+                    <TooltipTrigger>
+                      <span className="text-gray-500 dark:text-gray-400 cursor-help">ℹ️</span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Total funds available for trading, including cash, collateral, and adhoc margin</p>
+                    </TooltipContent>
+                  </RadixTooltip>
+                </TooltipProvider>
               </div>
+              <span className="text-lg font-bold text-green-600 dark:text-green-500">
+                ₹{totalAvailable.toFixed(2)}
+              </span>
             </div>
             <div className="flex items-center space-x-2 bg-red-50 dark:bg-red-900/20 px-4 py-3 rounded-lg shadow-sm">
-              <span className="text-base font-medium text-gray-600 dark:text-gray-400">Utilised:</span>
-              <div className="tooltip" data-tip="The amount of funds currently being used in open positions. This includes exposure from current trades and positions.">
-                <span className="text-lg font-bold text-red-600 dark:text-red-500">
-                  ₹{totalUtilised.toFixed(2)}
-                </span>
+              <div className="flex items-center space-x-1">
+                <span className="text-base font-medium text-gray-600 dark:text-gray-400">Utilised:</span>
+                <TooltipProvider>
+                  <RadixTooltip>
+                    <TooltipTrigger>
+                      <span className="text-gray-500 dark:text-gray-400 cursor-help">ℹ️</span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Funds currently used in open positions and trades</p>
+                    </TooltipContent>
+                  </RadixTooltip>
+                </TooltipProvider>
               </div>
+              <span className="text-lg font-bold text-red-600 dark:text-red-500">
+                ₹{totalUtilised.toFixed(2)}
+              </span>
             </div>
             <div className="flex items-center space-x-2 bg-blue-50 dark:bg-blue-900/20 px-4 py-3 rounded-lg shadow-sm">
-              <span className="text-base font-medium text-gray-600 dark:text-gray-400">Net:</span>
-              <div className="tooltip" data-tip="Your net balance after considering all credits and debits. This is your actual account value.">
-                <span className="text-lg font-bold text-blue-600 dark:text-blue-500">
-                  ₹{totalNet.toFixed(2)}
-                </span>
+              <div className="flex items-center space-x-1">
+                <span className="text-base font-medium text-gray-600 dark:text-gray-400">Net:</span>
+                <TooltipProvider>
+                  <RadixTooltip>
+                    <TooltipTrigger>
+                      <span className="text-gray-500 dark:text-gray-400 cursor-help">ℹ️</span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Your total account balance after considering all credits and debits</p>
+                    </TooltipContent>
+                  </RadixTooltip>
+                </TooltipProvider>
               </div>
+              <span className="text-lg font-bold text-blue-600 dark:text-blue-500">
+                ₹{totalNet.toFixed(2)}
+              </span>
             </div>
           </div>
         </div>
@@ -246,9 +279,6 @@ export function FundsCard({ getfunds }: FundsProps) {
           <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">📊 Funds Distribution</h3>
-              <div className="tooltip" data-tip="Visual representation of how your funds are distributed between available and utilised amounts across different segments. Helps track your trading capacity and current exposure.">
-                <span className="text-gray-500 dark:text-gray-400 cursor-help">ℹ️</span>
-              </div>
             </div>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
@@ -268,9 +298,6 @@ export function FundsCard({ getfunds }: FundsProps) {
           <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">💵 Funds Composition</h3>
-              <div className="tooltip" data-tip="Detailed breakdown of your funds into different components. Shows how your available funds are allocated between cash, collateral, and adhoc margin.">
-                <span className="text-gray-500 dark:text-gray-400 cursor-help">ℹ️</span>
-              </div>
             </div>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
@@ -293,27 +320,18 @@ export function FundsCard({ getfunds }: FundsProps) {
           <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Total Cash</h4>
-              <div className="tooltip" data-tip="The total amount of liquid cash available in your account. This includes your opening balance and any additional pay-ins.">
-                <span className="text-gray-500 dark:text-gray-400 cursor-help">ℹ️</span>
-              </div>
             </div>
             <p className="text-2xl font-bold text-blue-600 dark:text-blue-500 mt-2">₹{totalCash.toFixed(2)}</p>
           </div>
           <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Total Collateral</h4>
-              <div className="tooltip" data-tip="The total value of securities and other assets held as collateral. This can be used to increase your trading power.">
-                <span className="text-gray-500 dark:text-gray-400 cursor-help">ℹ️</span>
-              </div>
             </div>
             <p className="text-2xl font-bold text-amber-600 dark:text-amber-500 mt-2">₹{totalCollateral.toFixed(2)}</p>
           </div>
           <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
               <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Adhoc Margin</h4>
-              <div className="tooltip" data-tip="Additional margin provided by the broker for specific trades. This is temporary and can be withdrawn based on market conditions.">
-                <span className="text-gray-500 dark:text-gray-400 cursor-help">ℹ️</span>
-              </div>
             </div>
             <p className="text-2xl font-bold text-purple-600 dark:text-purple-500 mt-2">₹{totalAdhocMargin.toFixed(2)}</p>
           </div>
