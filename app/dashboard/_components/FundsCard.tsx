@@ -13,7 +13,7 @@ import {
 } from 'recharts';
 
 interface Margin {
-  equity?: {
+  equity: {
     enabled: boolean;
     net: number;
     available: {
@@ -40,7 +40,7 @@ interface Margin {
       delivery: number;
     };
   };
-  commodity?: {
+  commodity: {
     enabled: boolean;
     net: number;
     available: {
@@ -70,7 +70,7 @@ interface Margin {
 }
 
 interface FundsProps {
-  getfunds?: {
+  getfunds: {
     success: boolean;
     profile: Margin;
   };

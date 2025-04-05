@@ -20,23 +20,6 @@ import {
 
 interface Position {
   tradingsymbol: string;
-  quantity: number;
-  average_price: number;
-  last_price: number;
-  pnl: number;
-  unrealised: number;
-  realised: number;
-  product: string;
-  exchange: string;
-  instrument_token: string;
-  buy_quantity: number;
-  sell_quantity: number;
-  buy_price: number;
-  sell_price: number;
-}
-
-interface PositionsProps {
-  positions: Position[];
   exchange: string;
   instrument_token: number;
   product: string;
@@ -77,8 +60,10 @@ interface PositionsProps {
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
 export function PositionsCard({ positions }: PositionsProps) {
-  if (!positions || !Array.isArray(positions) || positions.length === 0) {
+  if (!positions || !positions.net || !positions.day) {
+    return (
       <motion.div 
+        className="p-5 rounded-lg shadow bg-white dark:bg-gray-800"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3 }}
@@ -91,21 +76,18 @@ export function PositionsCard({ positions }: PositionsProps) {
     );
   }
 
-  const totalPnL = positions.reduce((acc, pos) => acc + pos.pnl, 0);
-  const totalUnrealised = positions.reduce((acc, pos) => acc + pos.unrealised, 0);
-  const totalRealised = positions.reduce((acc, pos) => acc + pos.realised, 0);
-  const isProfit = totalPnL >= 0;
-
   const totalPnL = positions.net.reduce((acc, pos) => acc + pos.pnl, 0);
   const totalUnrealised = positions.net.reduce((acc, pos) => acc + pos.unrealised, 0);
   const totalRealised = positions.net.reduce((acc, pos) => acc + pos.realised, 0);
   const isProfit = totalPnL >= 0;
 
+  const chartData = positions.net.map((pos) => ({
     name: pos.tradingsymbol,
     pnl: pos.pnl,
     unrealised: pos.unrealised,
     realised: pos.realised,
     value: pos.quantity * pos.last_price,
+  }));
 
   const container = {
     hidden: { opacity: 0 },
@@ -218,7 +200,6 @@ export function PositionsCard({ positions }: PositionsProps) {
         initial="hidden"
         animate="show"
       >
-        {positions.map((position) => (
         {positions.net.map((position) => (
           <motion.div
             key={position.tradingsymbol}

@@ -5,26 +5,6 @@ import { motion } from 'framer-motion';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, CartesianGrid, XAxis, YAxis, Bar } from 'recharts';
 
 interface Order {
-<<<<<<< Updated upstream
-  order_id: string;
-  tradingsymbol: string;
-  transaction_type: string;
-  quantity: number;
-  price: number;
-  average_price: number;
-  status: string;
-  order_timestamp: string;
-  product: string;
-  exchange: string;
-  instrument_token: string;
-  validity: string;
-  order_type: string;
-  trigger_price: number;
-  disclosed_quantity: number;
-  filled_quantity: number;
-  pending_quantity: number;
-  cancelled_quantity: number;
-=======
   account_id: string;
   placed_by: string;
   order_id: string;
@@ -58,7 +38,6 @@ interface Order {
   meta: Record<string, any>;
   tag: string | null;
   guid: string;
->>>>>>> Stashed changes
 }
 
 interface OrdersProps {
