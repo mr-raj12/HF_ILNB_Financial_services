@@ -71,13 +71,65 @@ interface Margin {
 
 interface FundsProps {
   getfunds: {
-    success: boolean;
-    profile: Margin;
+    equity: {
+      enabled: boolean;
+      net: number;
+      available: {
+        adhoc_margin: number;
+        cash: number;
+        opening_balance: number;
+        live_balance: number;
+        collateral: number;
+        intraday_payin: number;
+      };
+      utilised: {
+        debits: number;
+        exposure: number;
+        m2m_realised: number;
+        m2m_unrealised: number;
+        option_premium: number;
+        payout: number;
+        span: number;
+        holding_sales: number;
+        turnover: number;
+        liquid_collateral: number;
+        stock_collateral: number;
+        equity: number;
+        delivery: number;
+      };
+    };
+    commodity: {
+      enabled: boolean;
+      net: number;
+      available: {
+        adhoc_margin: number;
+        cash: number;
+        opening_balance: number;
+        live_balance: number;
+        collateral: number;
+        intraday_payin: number;
+      };
+      utilised: {
+        debits: number;
+        exposure: number;
+        m2m_realised: number;
+        m2m_unrealised: number;
+        option_premium: number;
+        payout: number;
+        span: number;
+        holding_sales: number;
+        turnover: number;
+        liquid_collateral: number;
+        stock_collateral: number;
+        equity: number;
+        delivery: number;
+      };
+    };
   };
 }
 
 export function FundsCard({ getfunds }: FundsProps) {
-  if (!getfunds?.profile) {
+  if (!getfunds) {
     return (
       <div className="flex items-center justify-center h-64">
         <p className="text-gray-500 dark:text-gray-400">No funds data available</p>
@@ -85,7 +137,7 @@ export function FundsCard({ getfunds }: FundsProps) {
     );
   }
 
-  const { equity, commodity } = getfunds.profile;
+  const { equity, commodity } = getfunds;
 
   const totalAvailable = (equity?.available?.live_balance || 0) + (commodity?.available?.live_balance || 0);
   const totalUtilised = (equity?.utilised?.exposure || 0) + (commodity?.utilised?.exposure || 0);

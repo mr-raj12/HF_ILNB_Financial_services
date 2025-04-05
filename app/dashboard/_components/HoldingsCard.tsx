@@ -18,20 +18,40 @@ import {
 
 interface Holding {
   tradingsymbol: string;
-  quantity: number;
-  average_price: number;
-  last_price: number;
-  pnl: number;
-  instrument_token: string;
+  exchange: string;
+  instrument_token: number;
   isin: string;
   product: string;
+  price: number;
+  quantity: number;
+  used_quantity: number;
+  t1_quantity: number;
+  realised_quantity: number;
+  authorised_quantity: number;
+  authorised_date: string;
+  authorisation: Record<string, any>;
+  opening_quantity: number;
+  short_quantity: number;
   collateral_quantity: number;
   collateral_type: string;
-  t1_quantity: number;
+  discrepancy: boolean;
+  average_price: number;
+  last_price: number;
+  close_price: number;
+  pnl: number;
+  day_change: number;
+  day_change_percentage: number;
+  mtf: {
+    quantity: number;
+    used_quantity: number;
+    average_price: number;
+    value: number;
+    initial_margin: number;
+  };
 }
 
 interface HoldingsProps {
-  getholdings?: Holding[];
+  getholdings: Holding[];
 }
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
