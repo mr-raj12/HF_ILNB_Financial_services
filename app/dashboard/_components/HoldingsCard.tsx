@@ -9,6 +9,11 @@ import {
   ResponsiveContainer,
   Tooltip,
   Legend,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
 } from 'recharts';
 
 interface Holding {
@@ -146,6 +151,39 @@ export function HoldingsCard({ getholdings }: HoldingsProps) {
                     }}
                   />
                 </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4">
+            <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Holdings Value & P&L</h3>
+            <div className="h-72">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={getholdings.map(holding => ({
+                    name: holding.tradingsymbol,
+                    value: holding.quantity * holding.last_price,
+                    pnl: holding.pnl
+                  }))}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis yAxisId="left" orientation="left" stroke="#8884d8" />
+                  <YAxis yAxisId="right" orientation="right" stroke="#82ca9d" />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#f9fafb', 
+                      border: '1px solid #e5e7eb', 
+                      borderRadius: '0.5rem',
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                    }}
+                    formatter={(value: number) => `₹${value.toFixed(2)}`}
+                  />
+                  <Legend />
+                  <Bar yAxisId="left" dataKey="value" name="Current Value" fill="#8884d8" />
+                  <Bar yAxisId="right" dataKey="pnl" name="P&L" fill="#82ca9d" />
+                </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
