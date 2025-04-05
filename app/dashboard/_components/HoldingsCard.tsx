@@ -17,6 +17,9 @@ import {
   LineChart,
   Line,
 } from 'recharts';
+
+import {PriceChart} from './PriceChart'
+
 import {
   Tooltip as RadixTooltip,
   TooltipContent,
@@ -34,6 +37,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer"
+import { Button } from '@/components/ui/button';
 
 interface Holding {
   tradingsymbol: string;
@@ -280,55 +284,75 @@ export function HoldingsCard({ getholdings }: HoldingsProps) {
               const dayChangePercentage = holding.day_change_percentage;
 
               return (
-                <motion.div
-                  key={holding.tradingsymbol}
-                  className="border border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all duration-200 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  
-                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
-                    <div className="space-y-2">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{holding.tradingsymbol}</h3>
-                      <div className="flex flex-wrap items-center gap-4">
-                        <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 px-3 py-1 rounded-lg">
-                          <span className="text-sm text-gray-600 dark:text-gray-400">Quantity</span>
-                          <span className="font-medium text-gray-900 dark:text-white">{holding.quantity}</span>
-                        </div>
-                        <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 px-3 py-1 rounded-lg">
-                          <span className="text-sm text-gray-600 dark:text-gray-400">Avg Price</span>
-                          <span className="font-medium text-gray-900 dark:text-white">₹{holding.average_price.toFixed(2)}</span>
-                        </div>
-                        <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 px-3 py-1 rounded-lg">
-                          <span className="text-sm text-gray-600 dark:text-gray-400">LTP</span>
-                          <span className="font-medium text-gray-900 dark:text-white">₹{holding.last_price.toFixed(2)}</span>
+                <div>
+                  <motion.div
+                    key={holding.tradingsymbol}
+                    className="border border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all duration-200 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                  >
+
+                    
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
+                      <div className="space-y-2">
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{holding.tradingsymbol}</h3>
+                        <div className="flex flex-wrap items-center gap-4">
+                          <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 px-3 py-1 rounded-lg">
+                            <span className="text-sm text-gray-600 dark:text-gray-400">Quantity</span>
+                            <span className="font-medium text-gray-900 dark:text-white">{holding.quantity}</span>
+                          </div>
+                          <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 px-3 py-1 rounded-lg">
+                            <span className="text-sm text-gray-600 dark:text-gray-400">Avg Price</span>
+                            <span className="font-medium text-gray-900 dark:text-white">₹{holding.average_price.toFixed(2)}</span>
+                          </div>
+                          <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 px-3 py-1 rounded-lg">
+                            <span className="text-sm text-gray-600 dark:text-gray-400">LTP</span>
+                            <span className="font-medium text-gray-900 dark:text-white">₹{holding.last_price.toFixed(2)}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="flex flex-col items-end space-y-1">
-                      <div className="flex items-center space-x-2">
-                        <span 
-                          className={`text-lg font-bold ${
-                            isHoldingProfit ? 'text-green-600 dark:text-green-500' : 'text-red-600 dark:text-red-500'
-                          }`}
-                        >
-                          {isHoldingProfit ? (
-                            <ArrowTrendingUpIcon className="h-5 w-5 inline mr-1" />
-                          ) : (
-                            <ArrowTrendingDownIcon className="h-5 w-5 inline mr-1" />
-                          )}
-                          ₹{holdingPnL.toFixed(2)}
+                      <div className="flex flex-col items-end space-y-1">
+                        <div className="flex items-center space-x-2">
+                          <span 
+                            className={`text-lg font-bold ${
+                              isHoldingProfit ? 'text-green-600 dark:text-green-500' : 'text-red-600 dark:text-red-500'
+                            }`}
+                          >
+                            {isHoldingProfit ? (
+                              <ArrowTrendingUpIcon className="h-5 w-5 inline mr-1" />
+                            ) : (
+                              <ArrowTrendingDownIcon className="h-5 w-5 inline mr-1" />
+                            )}
+                            ₹{holdingPnL.toFixed(2)}
+                          </span>
+                        </div>
+                        <span className={`text-sm font-medium ${
+                          dayChangePercentage >= 0 ? 'text-green-600 dark:text-green-500' : 'text-red-600 dark:text-red-500'
+                        }`}>
+                          {dayChangePercentage >= 0 ? '+' : ''}{dayChangePercentage.toFixed(2)}%
                         </span>
                       </div>
-                      <span className={`text-sm font-medium ${
-                        dayChangePercentage >= 0 ? 'text-green-600 dark:text-green-500' : 'text-red-600 dark:text-red-500'
-                      }`}>
-                        {dayChangePercentage >= 0 ? '+' : ''}{dayChangePercentage.toFixed(2)}%
-                      </span>
                     </div>
-                  </div>
-                </motion.div>
+                  </motion.div>
+
+                  <Drawer>
+                    <DrawerTrigger>Open</DrawerTrigger>
+                    <DrawerContent>
+                      <div className='w-1/2'>
+                        <PriceChart/>
+                      </div>
+                      
+                      
+                    </DrawerContent>
+                  </Drawer>
+
+                </div>
+
+                
+
+
+                
               );
             })}
           </div>
