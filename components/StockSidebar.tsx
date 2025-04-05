@@ -13,6 +13,12 @@ const MOCK_DATA = [
   { name: 'TCS', price: 3560, change: -0.8 },
   { name: 'INFY', price: 1480, change: 0.4 },
   { name: 'ICICIBANK', price: 950, change: -1.1 },
+  { name: 'HDFCBANK', price: 1630.80, change: -1.03 },
+  { name: 'SBIN', price: 605.00, change: +1.65 },
+  { name: 'KOTAKBANK', price: 1702.75, change: -0.25 },
+  { name: 'ITC', price: 411.20, change: +0.30 },
+  { name:"AXISBANK", price: 1045.95, change: +0.90 },
+  { name: "LT", price: 3550.35, change: -0.15 },
 ];
 
 export default function StockSidebar() {

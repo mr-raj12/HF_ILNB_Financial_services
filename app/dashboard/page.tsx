@@ -147,11 +147,6 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="flex min-h-screen w-full bg-background">
-      <aside className="w-[300px] shrink-0 border-r border-border hidden md:block">
-        <StockSidebar />
-      </aside>
-      <main className="flex-1 overflow-y-auto">
         <div className="max-w-7xl mx-auto p-6 space-y-6">
           {session && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 font-inter">
@@ -295,7 +290,5 @@ export default function Dashboard() {
             </Card>
           )}
         </div>
-      </main>
-    </div>
   );
 }
