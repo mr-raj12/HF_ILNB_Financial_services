@@ -1,7 +1,5 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
-import { useSearchParams } from 'next/navigation';
 import {
   Card,
   CardContent,
@@ -14,278 +12,198 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle, Briefcase, BarChart2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from "@/components/ui/badge";
-import { access } from 'node:fs';
-import { set } from 'date-fns';
+import AvailableActionsCard from './components/AvailableActionsCard';
+import { motion } from "framer-motion";
+import { useState } from 'react';
+// Static Data
+// const profileData = { /* ...as you defined */ };
+// const fundsData = { /* ...as you defined */ };
+// const holdingsData = { /* ...as you defined */ };
+// const positionsData = { /* ...as you defined */ };
+// const ordersData = { /* ...as you defined */ };
+
+const profileData = {
+  "success": true,
+  "profile": {
+    "user_id": "DNN867",
+    "user_type": "individual/res_no_nn",
+    "email": "mr.raj.earth@gmail.com",
+    "user_name": "Mrityunjay Raj",
+    "user_shortname": "Mrityunjay",
+    "broker": "ZERODHA",
+    "exchanges": [
+      "NSE",
+      "BSE",
+      "MF"
+    ],
+    "products": [
+      "CNC",
+      "NRML",
+      "MIS",
+      "BO",
+      "CO"
+    ],
+    "order_types": [
+      "MARKET",
+      "LIMIT",
+      "SL",
+      "SL-M"
+    ],
+    "avatar_url": null,
+    "meta": {
+      "demat_consent": "consent"
+    }
+  }
+};
+const fundsData = {
+    "success": true,
+    "profile": {
+      "equity": {
+        "enabled": true,
+        "net": 17.3,
+        "available": {
+          "adhoc_margin": 0,
+          "cash": 17.3,
+          "opening_balance": 17.3,
+          "live_balance": 17.3,
+          "collateral": 0,
+          "intraday_payin": 0
+        },
+        "utilised": {
+          "debits": 0,
+          "exposure": 0,
+          "m2m_realised": 0,
+          "m2m_unrealised": 0,
+          "option_premium": 0,
+          "payout": 0,
+          "span": 0,
+          "holding_sales": 0,
+          "turnover": 0,
+          "liquid_collateral": 0,
+          "stock_collateral": 0,
+          "equity": 0,
+          "delivery": 0
+        }
+      },
+      "commodity": {
+        "enabled": false,
+        "net": 0,
+        "available": {
+          "adhoc_margin": 0,
+          "cash": 0,
+          "opening_balance": 0,
+          "live_balance": 0,
+          "collateral": 0,
+          "intraday_payin": 0
+        },
+        "utilised": {
+          "debits": 0,
+          "exposure": 0,
+          "m2m_realised": 0,
+          "m2m_unrealised": 0,
+          "option_premium": 0,
+          "payout": 0,
+          "span": 0,
+          "holding_sales": 0,
+          "turnover": 0,
+          "liquid_collateral": 0,
+          "stock_collateral": 0,
+          "equity": 0,
+          "delivery": 0
+        }
+      }
+    }
+};
+const holdingsData = {
+  "success": true,
+  "profile": [
+    {
+      "tradingsymbol": "KANANIIND",
+      "exchange": "BSE",
+      "instrument_token": 129583108,
+      "isin": "INE879E01037",
+      "product": "CNC",
+      "price": 0,
+      "quantity": 0,
+      "used_quantity": 0,
+      "t1_quantity": 1,
+      "realised_quantity": 0,
+      "authorised_quantity": 0,
+      "authorised_date": "2025-04-05 00:00:00",
+      "authorisation": {},
+      "opening_quantity": 1,
+      "short_quantity": 0,
+      "collateral_quantity": 0,
+      "collateral_type": "",
+      "discrepancy": false,
+      "average_price": 2.63,
+      "last_price": 2.45,
+      "close_price": 2.58,
+      "pnl": -0.17999999999999972,
+      "day_change": -0.1299999999999999,
+      "day_change_percentage": -5.038759689922476,
+      "mtf": {
+        "quantity": 0,
+        "used_quantity": 0,
+        "average_price": 0,
+        "value": 0,
+        "initial_margin": 0
+      }
+    }
+  ]
+};
+const positionsData = {
+  "success": true,
+  "profile": {
+    "net": [],
+    "day": []
+  }
+};
+const ordersData = {
+  "success": true,
+  "profile": []
+};
 
 export default function Dashboard() {
-  const searchParams = useSearchParams();
-  const [session, setSession] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<any>(null);
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [apiKey, setApiKey] = useState<string | null>(null);
-  const [apiSecret, setApiSecret] = useState<string | null>(null);
+  const [visibleSection, setVisibleSection] = useState<string | null>(null);
 
-  const apiActions = [
-    'getProfile',
-    'getFunds',
-    'getHoldings',
-    'getPositions',
-    'getOrders',
-    //'getMarketData',
-    //'getHistoricalData',
-    //'placeOrder',
-    //'cancelOrder',
-    //'manageGTT',
+  const sections = [
+    { label: 'Profile', data: profileData },
+    { label: 'Funds', data: fundsData },
+    { label: 'Holdings', data: holdingsData },
+    { label: 'Positions', data: positionsData },
+    { label: 'Orders', data: ordersData },
   ];
 
-  // useRef to track if session has been loaded already
-  const sessionFetched = useRef(false);
-
-  useEffect(() => {
-    const requestToken = searchParams.get('request_token');
-    if (requestToken && !sessionFetched.current) {
-      fetchSession(requestToken);
-      sessionFetched.current = true; // Prevent refetching the session
-    } else {
-      setLoading(false);
-    }
-  }, [searchParams]);
-
-  async function fetchSession(requestToken: string) {
-    try {
-      const storedCredentials = localStorage.getItem('zerodhaCredentials');
-      if (storedCredentials) {
-        const { apiKey, apiSecret } = JSON.parse(storedCredentials);
-        if (apiKey && apiSecret) {
-          setApiKey(apiKey);
-          setApiSecret(apiSecret);
-          //console.log('Zerodha credentials loaded from localStorage:', { apiKey, apiSecret });
-        } else {
-          console.warn('Invalid Zerodha credentials in localStorage');
-        }
-      } else {
-        console.warn('No Zerodha credentials found in localStorage');
-      }
-      const res = await fetch('/api/auth/callback', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          requestToken, 
-        apiKey: storedCredentials ? JSON.parse(storedCredentials).apiKey : undefined,
-        apiSecret: storedCredentials ? JSON.parse(storedCredentials).apiSecret : undefined
-        }),
-      });
-
-      if (!res.ok) throw new Error('Session fetch failed');
-      const data = await res.json();
-      setSession(data.session);
-      let access_token = data.session.access_token;
-      localStorage.setItem('zerodhaUserAT', JSON.stringify({  access_token }));
-      setAccessToken(access_token);
-      alert('Session fetched successfully! Access token stored in localStorage.');
-    } catch (err) {
-      setError('Failed to fetch session. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleApiAction(action: string) {
-    // alert(`Calling ${action} API...`);
-    
-    
-    
-
-    try {
-      console.log(`Calling API: ${action}`);
-      const res = await fetch(`/api/${action}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          access_token: accessToken,
-          apiKey: apiKey
-        }),
-      });
-
-      // alert(`API call to ${action} completed!`);
-      // return;
-
-      if (!res.ok) throw new Error(`Failed to fetch from ${action}`);
-
-      const data = await res.json();
-      setResult({ action, data });
-    } catch (err) {
-      setResult({ action, data: { error: 'API call failed' } });
-    }
-  }
-
-  if (loading) {
-    return (
-      <div className="container mx-auto p-6">
-        <Skeleton className="h-[150px] w-full" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="container mx-auto p-6">
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-6 space-y-6">
-        {session && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 font-inter">
-            {/* USER CARD */}
-            <Card className="col-span-full bg-gradient-to-br from-[#007aff] to-[#0061d5] text-white shadow-lg rounded-xl overflow-hidden transition-all hover:shadow-2xl">
-              <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-4">
-                {/* Left: Avatar + Info */}
-                <div className="flex items-center gap-5">
-                  <div className="relative">
-                    <img
-                      src={session.avatar_url || '/default-avatar.png'}
-                      alt="User Avatar"
-                      className="w-20 h-20 rounded-full object-cover shadow-md border-2 border-white"
-                    />
-                    <span className="absolute bottom-1 right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full" />
-                  </div>
-
-                  <div>
-                    <CardTitle className="text-2xl font-semibold">
-                      {session.user_name || session.user_shortname || 'Welcome User'}
-                    </CardTitle>
-
-                    <CardDescription className="text-white/80 text-sm mt-2 space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span>Client ID:</span>
-                        <div className="flex items-center gap-1">
-                          <code className="bg-white/10 px-2 py-0.5 rounded text-xs font-mono">
-                            {session.user_id}
-                          </code>
-                          <button
-                            onClick={() => navigator.clipboard.writeText(session.user_id)}
-                            className="text-white/60 hover:text-white transition"
-                            title="Copy Client ID"
-                          >
-                            📋
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <span>Email:</span>
-                        <span className="truncate max-w-[200px]">{session.email}</span>
-                      </div>
-                    </CardDescription>
-                  </div>
-                </div>
-
-                {/* Right: Broker Badge with Logo */}
-                <div className="flex items-center gap-2 mt-2 md:mt-0">
-                    <h1 className="text-2xl font-semibold">{session.broker}</h1>
-                </div>
-              </CardHeader>
-            </Card>
-
-            {/* TRADING ACCESS */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg font-medium flex items-center gap-2">
-                  <Briefcase className="h-5 w-5" /> Trading Access
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="text-sm font-medium mb-2">Exchanges</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {session.exchanges.map((exchange: string) => (
-                        <Badge key={exchange} variant="outline">
-                          {exchange}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-medium mb-2">Products</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {session.products.map((product: string) => (
-                        <Badge key={product} variant="outline">
-                          {product}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* ORDER TYPES */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg font-medium flex items-center gap-2">
-                  <BarChart2 className="h-5 w-5" /> Order Types
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {session.order_types.map((type: string) => (
-                    <Badge key={type} variant="secondary">
-                      {type}
-                    </Badge>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Available Actions</CardTitle>
-            <CardDescription>Click to trigger respective API calls</CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-wrap gap-3">
-            {apiActions.map((action) => (
-              <Button
-                key={action}
-                onClick={() => handleApiAction(action)}
-                variant="outline"
-                className="capitalize"
-              >
-                {action}
-              </Button>
-            ))}
-          </CardContent>
-        </Card>
-
-        {result && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Response: {result.action}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <pre className="whitespace-pre-wrap break-words text-sm bg-muted p-4 rounded-md">
-                {JSON.stringify(result.data, null, 2)}
-              </pre>
-            </CardContent>
-          </Card>
-        )}
+    <div className="p-4 space-y-4">
+      <div className="flex flex-wrap gap-2">
+        {sections.map((section) => (
+          <button
+            key={section.label}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition"
+            onClick={() =>
+              setVisibleSection(
+                visibleSection === section.label ? null : section.label
+              )
+            }
+          >
+            {section.label}
+          </button>
+        ))}
       </div>
+
+      {sections.map(
+        (section) =>
+          visibleSection === section.label && (
+            <div key={section.label}>
+              <h2 className="text-xl font-bold mt-4 mb-2">{section.label}</h2>
+              <pre className="bg-gray-100 p-4 rounded overflow-x-auto text-sm">
+                {JSON.stringify(section.data, null, 2)}
+              </pre>
+            </div>
+          )
+      )}
     </div>
   );
 }
