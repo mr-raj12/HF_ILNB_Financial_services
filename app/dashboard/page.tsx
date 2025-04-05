@@ -505,7 +505,7 @@ export default function Dashboard() {
         (section) =>
           visibleSection === section.label && (
             <div key={section.label}>
-              <h2 className="text-xl font-bold mt-4 mb-2">{section.label}</h2>
+              {/* <h2 className="text-xl font-bold mt-4 mb-2">{section.label}</h2> */}
               {(() => {
                 switch (section.label) {
                   case 'Funds':

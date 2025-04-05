@@ -38,6 +38,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer"
 import { Button } from '@/components/ui/button';
+import StockOverview from './StockOverview';
 
 interface Holding {
   tradingsymbol: string;
@@ -287,13 +288,12 @@ export function HoldingsCard({ getholdings }: HoldingsProps) {
                 <div>
                   <motion.div
                     key={holding.tradingsymbol}
-                    className="border border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all duration-200 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md"
+                    className="border border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all duration-200 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md cursor-pointer"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.3 }}
+                    onClick={() => document.getElementById(`drawer-${holding.tradingsymbol}`)?.click()}
                   >
-
-                    
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
                       <div className="space-y-2">
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{holding.tradingsymbol}</h3>
@@ -337,22 +337,91 @@ export function HoldingsCard({ getholdings }: HoldingsProps) {
                   </motion.div>
 
                   <Drawer>
-                    <DrawerTrigger>Open</DrawerTrigger>
-                    <DrawerContent>
-                      <div className='w-1/2'>
-                        <PriceChart/>
+                    <DrawerTrigger asChild>
+                      <Button 
+                        id={`drawer-${holding.tradingsymbol}`}
+                        className="hidden"
+                      >
+                        Open Drawer
+                      </Button>
+                    </DrawerTrigger>
+                    <DrawerContent className="h-[80vh]">
+                      <div className="flex flex-col h-full">
+                        <DrawerHeader className="border-b border-gray-200 dark:border-gray-700">
+                          <div className="flex justify-between items-center">
+                            <div className='w-full' >
+                              <DrawerTitle className="text-xl font-bold text-center w-full text-gray-900 dark:text-white">
+                                {holding.tradingsymbol} Analysis
+                              </DrawerTitle>
+                              <DrawerDescription className="text-gray-600 text-center dark:text-gray-400">
+                                Detailed stock information and price history
+                              </DrawerDescription>
+                            </div>
+                            <DrawerClose asChild>
+                              <Button 
+                                variant="ghost" 
+                                size="icon"
+                                className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="24"
+                                  height="24"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  className="h-5 w-5"
+                                >
+                                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                                <span className="sr-only">Close</span>
+                              </Button>
+                            </DrawerClose>
+                          </div>
+                        </DrawerHeader>
+                        
+                        <div className="flex-1 overflow-y-auto p-6">
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div className="space-y-6">
+                              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Price Chart</h3>
+                                <PriceChart/>
+                              </div>
+                            </div>
+                            
+                            <div className="space-y-6">
+                              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Stock Overview</h3>
+                                <StockOverview/>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <DrawerFooter className="border-t border-gray-200 dark:border-gray-700">
+                          <div className="flex justify-between items-center w-full">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-sm text-gray-600 dark:text-gray-400">Current Price:</span>
+                              <span className="text-lg font-semibold text-gray-900 dark:text-white">
+                                ₹{holding.last_price.toFixed(2)}
+                              </span>
+                              <span className={`text-sm font-medium ${
+                                holding.day_change_percentage >= 0 ? 'text-green-600 dark:text-green-500' : 'text-red-600 dark:text-red-500'
+                              }`}>
+                                {holding.day_change_percentage >= 0 ? '+' : ''}{holding.day_change_percentage.toFixed(2)}%
+                              </span>
+                            </div>
+                          </div>
+                        </DrawerFooter>
                       </div>
-                      
-                      
                     </DrawerContent>
                   </Drawer>
 
                 </div>
-
-                
-
-
-                
               );
             })}
           </div>

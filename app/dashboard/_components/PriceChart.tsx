@@ -392,12 +392,12 @@ export function PriceChart() {
   const priceChangePercent = (priceChange / previousPrice) * 100;
   
   return (
-    <div className="bg-[#1a1d1e] p-4 lg:p-6 rounded-lg">
+    <div className="bg-white p-4 lg:p-6 rounded-lg border border-gray-200">
       <div className="flex flex-col space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg lg:text-xl font-semibold text-white">{chartData.meta?.currency || '₹'}{currentPrice.toFixed(4)}</h2>
-            <span className={priceChange >= 0 ? "text-emerald-500" : "text-red-500"}>
+            <h2 className="text-lg lg:text-xl font-semibold text-gray-900">{chartData.meta?.currency || '₹'}{currentPrice.toFixed(4)}</h2>
+            <span className={priceChange >= 0 ? "text-green-600" : "text-red-600"}>
               {priceChange >= 0 ? "+" : ""}{priceChange.toFixed(4)} ({priceChangePercent.toFixed(2)}%)
             </span>
           </div>
@@ -437,7 +437,7 @@ export function PriceChart() {
         
         <div className="h-64 relative">
           {/* Price labels */}
-          <div className="absolute right-0 top-0 bottom-0 w-16 flex flex-col justify-between text-right pr-2 text-xs text-gray-400">
+          <div className="absolute right-0 top-0 bottom-0 w-16 flex flex-col justify-between text-right pr-2 text-xs text-gray-500">
             {priceLabels.map((price, i) => (
               <span key={i}>{chartData.meta?.currency || '₹'}{price}</span>
             ))}
@@ -448,7 +448,7 @@ export function PriceChart() {
             {/* Grid lines */}
             <div className="absolute inset-0 grid grid-rows-4">
               {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="border-t border-gray-800" />
+                <div key={i} className="border-t border-gray-100" />
               ))}
             </div>
             
@@ -476,25 +476,25 @@ export function PriceChart() {
                       className="absolute w-6 h-6 -ml-3 -mt-3 cursor-pointer group"
                       style={{ left: xPercent, top: yPercent }}
                     >
-                      <div className="absolute w-6 h-6 bg-emerald-500 rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-200"></div>
-                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-48 bg-[#1a1d1e] border border-emerald-500/20 text-white text-xs rounded-lg p-2 opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none shadow-lg z-10">
+                      <div className="absolute w-6 h-6 bg-green-500 rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-200"></div>
+                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-48 bg-white border border-gray-200 text-gray-900 text-xs rounded-lg p-2 opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none shadow-lg z-10">
                         <div className="flex items-center justify-between">
-                          <span className="text-gray-400">Price:</span>
-                          <span className="font-semibold text-emerald-500">{chartData.meta?.currency || '₹'}{point.y.toFixed(4)}</span>
+                          <span className="text-gray-500">Price:</span>
+                          <span className="font-semibold text-green-600">{chartData.meta?.currency || '₹'}{point.y.toFixed(4)}</span>
                         </div>
                         <div className="flex items-center justify-between mt-1">
-                          <span className="text-gray-400">Change:</span>
-                          <span className={`font-medium ${isUp ? "text-emerald-500" : "text-red-500"}`}>
+                          <span className="text-gray-500">Change:</span>
+                          <span className={`font-medium ${isUp ? "text-green-600" : "text-red-600"}`}>
                             {isUp ? "+" : ""}{priceChange.toFixed(4)} ({priceChangePercent.toFixed(2)}%)
                           </span>
                         </div>
                         <div className="flex items-center justify-between mt-1">
-                          <span className="text-gray-400">Time:</span>
+                          <span className="text-gray-500">Time:</span>
                           <span className="font-medium">
                             {new Date(point.x).toLocaleString()}
                           </span>
                         </div>
-                        <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-[#1a1d1e] border-r border-b border-emerald-500/20 rotate-45"></div>
+                        <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-white border-r border-b border-gray-200 rotate-45"></div>
                       </div>
                     </div>
                   );
