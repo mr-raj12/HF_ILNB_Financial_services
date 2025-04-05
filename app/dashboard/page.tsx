@@ -14,6 +14,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle, Briefcase, BarChart2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from "@/components/ui/badge";
+import StockSidebar from "@/components/StockSidebar";
 import { access } from 'node:fs';
 import { set } from 'date-fns';
 
@@ -146,146 +147,155 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-6 space-y-6">
-        {session && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 font-inter">
-            {/* USER CARD */}
-            <Card className="col-span-full bg-gradient-to-br from-[#007aff] to-[#0061d5] text-white shadow-lg rounded-xl overflow-hidden transition-all hover:shadow-2xl">
-              <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-4">
-                {/* Left: Avatar + Info */}
-                <div className="flex items-center gap-5">
-                  <div className="relative">
-                    <img
-                      src={session.avatar_url || '/default-avatar.png'}
-                      alt="User Avatar"
-                      className="w-20 h-20 rounded-full object-cover shadow-md border-2 border-white"
-                    />
-                    <span className="absolute bottom-1 right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full" />
-                  </div>
+    <div className="flex min-h-screen w-full bg-background">
+      <aside className="w-[300px] shrink-0 border-r border-border hidden md:block">
+        <StockSidebar />
+      </aside>
+      <main className="flex-1 overflow-y-auto">
+        <div className="max-w-7xl mx-auto p-6 space-y-6">
+          {session && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 font-inter">
+              {/* USER CARD */}
+              <Card className="col-span-full bg-gradient-to-br from-[#007aff] to-[#0061d5] text-white shadow-lg rounded-xl overflow-hidden transition-all hover:shadow-2xl">
+                <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-4">
+                  {/* Left: Avatar + Info */}
+                  <div className="flex items-center gap-5">
+                    <div className="relative">
+                      {session.avatar_url ? (
+                        <img
+                          src={session.avatar_url}
+                          alt="User Avatar"
+                          className="w-20 h-20 rounded-full object-cover shadow-md border-2 border-white"
+                        />
+                      ) : (
+                        <span>{session.user_shortname?.charAt(0) || 'U'}</span>
+                      )}
+                      <span className="absolute bottom-1 right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full" />
+                    </div>
 
-                  <div>
-                    <CardTitle className="text-2xl font-semibold">
-                      {session.user_name || session.user_shortname || 'Welcome User'}
-                    </CardTitle>
+                    <div>
+                      <CardTitle className="text-2xl font-semibold">
+                        {session.user_name || session.user_shortname || 'Welcome User'}
+                      </CardTitle>
 
-                    <CardDescription className="text-white/80 text-sm mt-2 space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span>Client ID:</span>
-                        <div className="flex items-center gap-1">
-                          <code className="bg-white/10 px-2 py-0.5 rounded text-xs font-mono">
-                            {session.user_id}
-                          </code>
-                          <button
-                            onClick={() => navigator.clipboard.writeText(session.user_id)}
-                            className="text-white/60 hover:text-white transition"
-                            title="Copy Client ID"
-                          >
-                            📋
-                          </button>
+                      <CardDescription className="text-white/80 text-sm mt-2 space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span>Client ID:</span>
+                          <div className="flex items-center gap-1">
+                            <code className="bg-white/10 px-2 py-0.5 rounded text-xs font-mono">
+                              {session.user_id}
+                            </code>
+                            <button
+                              onClick={() => navigator.clipboard.writeText(session.user_id)}
+                              className="text-white/60 hover:text-white transition"
+                              title="Copy Client ID"
+                            >
+                              📋
+                            </button>
+                          </div>
                         </div>
-                      </div>
 
-                      <div className="flex items-center gap-2">
-                        <span>Email:</span>
-                        <span className="truncate max-w-[200px]">{session.email}</span>
-                      </div>
-                    </CardDescription>
-                  </div>
-                </div>
-
-                {/* Right: Broker Badge with Logo */}
-                <div className="flex items-center gap-2 mt-2 md:mt-0">
-                    <h1 className="text-2xl font-semibold">{session.broker}</h1>
-                </div>
-              </CardHeader>
-            </Card>
-
-            {/* TRADING ACCESS */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg font-medium flex items-center gap-2">
-                  <Briefcase className="h-5 w-5" /> Trading Access
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="text-sm font-medium mb-2">Exchanges</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {session.exchanges.map((exchange: string) => (
-                        <Badge key={exchange} variant="outline">
-                          {exchange}
-                        </Badge>
-                      ))}
+                        <div className="flex items-center gap-2">
+                          <span>Email:</span>
+                          <span className="truncate max-w-[200px]">{session.email}</span>
+                        </div>
+                      </CardDescription>
                     </div>
                   </div>
-                  <div>
-                    <h4 className="text-sm font-medium mb-2">Products</h4>
-                    <div className="flex flex-wrap gap-2">
-                      {session.products.map((product: string) => (
-                        <Badge key={product} variant="outline">
-                          {product}
-                        </Badge>
-                      ))}
+
+                  {/* Right: Broker Badge with Logo */}
+                  <div className="flex items-center gap-2 mt-2 md:mt-0">
+                      <h1 className="text-2xl font-semibold">{session.broker}</h1>
+                  </div>
+                </CardHeader>
+              </Card>
+
+              {/* TRADING ACCESS */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg font-medium flex items-center gap-2">
+                    <Briefcase className="h-5 w-5" /> Trading Access
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="text-sm font-medium mb-2">Exchanges</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {session.exchanges.map((exchange: string) => (
+                          <Badge key={exchange} variant="outline">
+                            {exchange}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium mb-2">Products</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {session.products.map((product: string) => (
+                          <Badge key={product} variant="outline">
+                            {product}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
 
-            {/* ORDER TYPES */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg font-medium flex items-center gap-2">
-                  <BarChart2 className="h-5 w-5" /> Order Types
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {session.order_types.map((type: string) => (
-                    <Badge key={type} variant="secondary">
-                      {type}
-                    </Badge>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+              {/* ORDER TYPES */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg font-medium flex items-center gap-2">
+                    <BarChart2 className="h-5 w-5" /> Order Types
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {session.order_types.map((type: string) => (
+                      <Badge key={type} variant="secondary">
+                        {type}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Available Actions</CardTitle>
-            <CardDescription>Click to trigger respective API calls</CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-wrap gap-3">
-            {apiActions.map((action) => (
-              <Button
-                key={action}
-                onClick={() => handleApiAction(action)}
-                variant="outline"
-                className="capitalize"
-              >
-                {action}
-              </Button>
-            ))}
-          </CardContent>
-        </Card>
-
-        {result && (
           <Card>
             <CardHeader>
-              <CardTitle>Response: {result.action}</CardTitle>
+              <CardTitle>Available Actions</CardTitle>
+              <CardDescription>Click to trigger respective API calls</CardDescription>
             </CardHeader>
-            <CardContent>
-              <pre className="whitespace-pre-wrap break-words text-sm bg-muted p-4 rounded-md">
-                {JSON.stringify(result.data, null, 2)}
-              </pre>
+            <CardContent className="flex flex-wrap gap-3">
+              {apiActions.map((action) => (
+                <Button
+                  key={action}
+                  onClick={() => handleApiAction(action)}
+                  variant="outline"
+                  className="capitalize"
+                >
+                  {action}
+                </Button>
+              ))}
             </CardContent>
           </Card>
-        )}
-      </div>
+
+          {result && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Response: {result.action}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <pre className="whitespace-pre-wrap break-words text-sm bg-muted p-4 rounded-md">
+                  {JSON.stringify(result.data, null, 2)}
+                </pre>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </main>
     </div>
   );
 }
