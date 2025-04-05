@@ -47,7 +47,7 @@ export async function POST(req: Request) {
     //console.log('Generated session:');
 
     kc.setAccessToken(session.access_token);
-    
+    console.log(session);
     //console.log('Set access token for KiteConnect');
 
   
