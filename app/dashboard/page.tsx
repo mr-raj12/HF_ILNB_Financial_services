@@ -16,6 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { set } from 'date-fns';
 import ChatbotWithToggle from './components/chatbot';
 import {motion} from "framer-motion";
+import { HoldingsCard } from './components/HoldingsCard';
 // import Dashboard from '../detail/page';
 
 // Define types for the data structures
@@ -377,7 +378,18 @@ function Dashboard() {
                           </div>
                           <div className="p-4 bg-white overflow-x-auto">
                             <pre className="text-sm text-gray-800 whitespace-pre-wrap">
-                              {JSON.stringify(section.data, null, 2)}
+                            {/* {JSON.stringify(section.data, null, 2)} */}
+                                
+                                {section.label === "Holdings" ? (
+                                <>
+                                  {console.log(section.data)}
+                                  <HoldingsCard getholdings={section.data.profile} />
+                                </>
+                                ) : (
+                                <pre className="text-sm text-gray-800 whitespace-pre-wrap">
+                                  {JSON.stringify(section.data, null, 2)}
+                                </pre>
+                                )}
                             </pre>
                           </div>
                         </div>
