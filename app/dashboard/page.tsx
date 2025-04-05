@@ -444,12 +444,12 @@ function Dashboard() {
           <CardContent>
             {localStorage.getItem("upstoxCredentials") ? (
               <div className="space-y-4">
-                <div className="bg-gray-50 p-4 rounded-lg border">
+                {/* <div className="bg-gray-50 p-4 rounded-lg border">
                   <h3 className="text-sm font-medium text-gray-700 mb-2">Stored Credentials</h3>
                   <div className="bg-white p-2 rounded border text-xs font-mono overflow-x-auto">
                     {localStorage.getItem("upstoxCredentials")}
                   </div>
-                </div>
+                </div> */}
 
                 {!upstoxUserInfo ? (
                   <button
