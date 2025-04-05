@@ -97,7 +97,7 @@ function Dashboard() {
       setProfileData(data);
     } catch (err) {
       console.error('Error fetching profile data:', err);
-      alert('Error fetching profile data: check console');
+      //alert('Error fetching profile data: check console');
     }
   };
 
@@ -143,7 +143,7 @@ function Dashboard() {
       setFundsData(data);
     } catch (err) {
       console.error('Error fetching funds data:', err);
-      alert('Error fetching funds data: check console');
+      //alert('Error fetching funds data: check console');
     }
   };
 
@@ -193,7 +193,7 @@ function Dashboard() {
       return data;
     } catch (error) {
       console.error("Error fetching user info:", error);
-      alert("An error occurred while fetching user info");
+      //alert("An error occurred while fetching user info");
       return null;
     }
   };
