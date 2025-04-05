@@ -94,7 +94,7 @@ export default function Dashboard() {
   }
 
   async function handleApiAction(action: string) {
-    alert(`Calling ${action} API...`);
+    // alert(`Calling ${action} API...`);
     
     
     
