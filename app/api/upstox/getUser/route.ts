@@ -29,7 +29,7 @@ export async function POST(request: Request) {
       console.log('Using access_token directly as it\'s not a JSON string');
     }
 
-    console.log('Using access token:', accessToken);
+    //console.log('Using access token:', accessToken);
 
     // Make request to Upstox API
     const response = await axios.get('https://api.upstox.com/v2/user/profile', {

@@ -57,245 +57,58 @@ function Dashboard() {
   const [apiKey, setApiKey] = useState<string | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
 
-
-  const handleProfileData = async (action: string): Promise<void> => {
-    
+  // Get credentials once and return them
+  const getCredentials = (): { apiKey: string | null, accessToken: string | null } => {
     try {
-      console.log("Fetching credentials from localStorage...");
-    const storedCredentials = JSON.parse(localStorage.getItem('zerodhaCredentials') || '{}');
-    const storedAccessToken = JSON.parse(localStorage.getItem('zerodhaUserAT') || '{}');
-
-    console.log("Stored credentials:", storedCredentials);
-    console.log("Stored access token:", storedAccessToken);
-
-    let localApiKey = null;
-    let localAccessToken = null;
-
-    if (storedCredentials.apiKey && storedAccessToken.access_token) {
-      console.log("Setting API key and access token...");
-      localApiKey = storedCredentials.apiKey;
-      localAccessToken = storedAccessToken.access_token;
-      setApiKey(localApiKey);
-      setAccessToken(localAccessToken);
-    } else {
-      console.log("No valid credentials found in localStorage.");
-    }
-    console.log("Access Token:", localAccessToken);
-    console.log("API Key:", localApiKey);
-    console.log(`Calling API: ${action}`);
-    const res = await fetch(`/api/${action}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        access_token: localAccessToken,
-        apiKey: localApiKey,
-      }),
-    });
-
-      if (!res.ok) throw new Error(`Failed to fetch from ${action}`);
-
-      const data = await res.json();
-      console.log("Profile Data:", data);
-      setProfileData(data);
-    } catch (err) {
-      console.error('Error fetching profile data:', err);
-      //alert('Error fetching profile data: check console');
-    }
-  };
-
-  const handleFundsData = async (action: string): Promise<void> => {
-    
-    try {
-      console.log("Fetching credentials from localStorage...");
-    const storedCredentials = JSON.parse(localStorage.getItem('zerodhaCredentials') || '{}');
-    const storedAccessToken = JSON.parse(localStorage.getItem('zerodhaUserAT') || '{}');
-
-    console.log("Stored credentials:", storedCredentials);
-    console.log("Stored access token:", storedAccessToken);
-
-    let localApiKey = null;
-    let localAccessToken = null;
-
-    if (storedCredentials.apiKey && storedAccessToken.access_token) {
-      console.log("Setting API key and access token...");
-      localApiKey = storedCredentials.apiKey;
-      localAccessToken = storedAccessToken.access_token;
-      setApiKey(localApiKey);
-      setAccessToken(localAccessToken);
-    } else {
-      console.log("No valid credentials found in localStorage.");
-    }
-    console.log("Access Token:", localAccessToken);
-    console.log("API Key:", localApiKey);
-      console.log(`Calling API: ${action}`);
-      const res = await fetch(`/api/${action}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          access_token: localAccessToken,
-          apiKey: localApiKey,
-        }),
-      });
-
-      if (!res.ok) throw new Error(`Failed to fetch from ${action}`);
-
-      const data = await res.json();
-      setFundsData(data);
-    } catch (err) {
-      console.error('Error fetching funds data:', err);
-      //alert('Error fetching funds data: check console');
-    }
-  };
-  const handleHoldingsData = async (action: string): Promise<void> => {
-    
-    try {
-      console.log("Fetching credentials from localStorage...");
-    const storedCredentials = JSON.parse(localStorage.getItem('zerodhaCredentials') || '{}');
-    const storedAccessToken = JSON.parse(localStorage.getItem('zerodhaUserAT') || '{}');
-
-    console.log("Stored credentials:", storedCredentials);
-    console.log("Stored access token:", storedAccessToken);
-
-    let localApiKey = null;
-    let localAccessToken = null;
-
-    if (storedCredentials.apiKey && storedAccessToken.access_token) {
-      console.log("Setting API key and access token...");
-      localApiKey = storedCredentials.apiKey;
-      localAccessToken = storedAccessToken.access_token;
-      setApiKey(localApiKey);
-      setAccessToken(localAccessToken);
-    } else {
-      console.log("No valid credentials found in localStorage.");
-    }
-    console.log("Access Token:", localAccessToken);
-    console.log("API Key:", localApiKey);
-      console.log(`Calling API: ${action}`);
-      const res = await fetch(`/api/${action}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          access_token: localAccessToken,
-          apiKey: localApiKey,
-        }),
-      });
-
-      if (!res.ok) throw new Error(`Failed to fetch from ${action}`);
-
-      const data = await res.json();
-      setHoldingsData(data);
-    } catch (err) {
-      console.error('Error fetching funds data:', err);
-      //alert('Error fetching funds data: check console');
-    }
-  };
-  const handlePositionsData = async (action: string): Promise<void> => {
-    
-    try {
-      console.log("Fetching credentials from localStorage...");
-    const storedCredentials = JSON.parse(localStorage.getItem('zerodhaCredentials') || '{}');
-    const storedAccessToken = JSON.parse(localStorage.getItem('zerodhaUserAT') || '{}');
-
-    console.log("Stored credentials:", storedCredentials);
-    console.log("Stored access token:", storedAccessToken);
-
-    let localApiKey = null;
-    let localAccessToken = null;
-
-    if (storedCredentials.apiKey && storedAccessToken.access_token) {
-      console.log("Setting API key and access token...");
-      localApiKey = storedCredentials.apiKey;
-      localAccessToken = storedAccessToken.access_token;
-      setApiKey(localApiKey);
-      setAccessToken(localAccessToken);
-    } else {
-      console.log("No valid credentials found in localStorage.");
-    }
-    console.log("Access Token:", localAccessToken);
-    console.log("API Key:", localApiKey);
-      console.log(`Calling API: ${action}`);
-      const res = await fetch(`/api/${action}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          access_token: localAccessToken,
-          apiKey: localApiKey,
-        }),
-      });
-
-      if (!res.ok) throw new Error(`Failed to fetch from ${action}`);
-
-      const data = await res.json();
-      setPositionsData(data);
+      const storedCredentials = JSON.parse(localStorage.getItem('zerodhaCredentials') || '{}');
+      const storedAccessToken = JSON.parse(localStorage.getItem('zerodhaUserAT') || '{}');
       
-    } catch (err) {
-      console.error('Error fetching funds data:', err);
-      //alert('Error fetching funds data: check console');
+      return {
+        apiKey: storedCredentials.apiKey || null,
+        accessToken: storedAccessToken.access_token || null
+      };
+    } catch (error) {
+      console.error('Error getting credentials:', error);
+      return { apiKey: null, accessToken: null };
     }
   };
-  const handleOrdersData = async (action: string): Promise<void> => {
-    
+
+  // Generic API call function
+  const fetchBrokerData = async (endpoint: string, setDataFunction: Function): Promise<void> => {
     try {
-      console.log("Fetching credentials from localStorage...");
-    const storedCredentials = JSON.parse(localStorage.getItem('zerodhaCredentials') || '{}');
-    const storedAccessToken = JSON.parse(localStorage.getItem('zerodhaUserAT') || '{}');
-
-    console.log("Stored credentials:", storedCredentials);
-    console.log("Stored access token:", storedAccessToken);
-
-    let localApiKey = null;
-    let localAccessToken = null;
-
-    if (storedCredentials.apiKey && storedAccessToken.access_token) {
-      console.log("Setting API key and access token...");
-      localApiKey = storedCredentials.apiKey;
-      localAccessToken = storedAccessToken.access_token;
-      setApiKey(localApiKey);
-      setAccessToken(localAccessToken);
-    } else {
-      console.log("No valid credentials found in localStorage.");
-    }
-    console.log("Access Token:", localAccessToken);
-    console.log("API Key:", localApiKey);
-      console.log(`Calling API: ${action}`);
-      const res = await fetch(`/api/${action}`, {
+      const { apiKey, accessToken } = getCredentials();
+      
+      if (!apiKey || !accessToken) {
+        console.log("No valid credentials found in localStorage.");
+        return;
+      }
+      
+      const res = await fetch(`/api/${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          access_token: localAccessToken,
-          apiKey: localApiKey,
+          access_token: accessToken,
+          apiKey: apiKey,
         }),
       });
 
-      if (!res.ok) throw new Error(`Failed to fetch from ${action}`);
+      if (!res.ok) throw new Error(`Failed to fetch from ${endpoint}`);
 
       const data = await res.json();
-      setOrdersData(data);
-      
+      setDataFunction(data);
     } catch (err) {
-      console.error('Error fetching funds data:', err);
-      //alert('Error fetching funds data: check console');
+      console.error(`Error fetching ${endpoint} data:`, err);
     }
   };
-
-  
 
   const getUserInfo = async (): Promise<any | null> => {
     try {
       const accessToken = localStorage.getItem("upstoxCredentials");
   
       if (!accessToken) {
-        alert("No access token found");
+        console.log("No access token found for Upstox");
         return null;
       }
   
@@ -308,12 +121,10 @@ function Dashboard() {
       });
 
       const data = await response.json();
-      console.log("User Info:", data);
       setUpstoxUserInfo(data);
       return data;
     } catch (error) {
       console.error("Error fetching user info:", error);
-      //alert("An error occurred while fetching user info");
       return null;
     }
   };
@@ -322,59 +133,39 @@ function Dashboard() {
     { label: 'Profile', data: profileData?.profile, icon: <Briefcase className="h-4 w-4" /> },
     { label: 'Funds', data: fundsData, icon: <BarChart2 className="h-4 w-4" /> },
     { label: 'Holdings', data: holdingsData, icon: <AlertCircle className="h-4 w-4" /> },
-    { label: 'Positions', data: positionsData , icon: <AlertCircle className="h-4 w-4" /> },
+    { label: 'Positions', data: positionsData, icon: <AlertCircle className="h-4 w-4" /> },
     { label: 'Orders', data: ordersData, icon: <AlertCircle className="h-4 w-4" /> },
   ];
 
   // Filter sections with actual data
   const availableSections = sections.filter(section => section.data);
 
-  const getCredentials = () => {
-    console.log("Fetching credentials from localStorage...");
-    const storedCredentials = JSON.parse(localStorage.getItem('zerodhaCredentials') || '{}');
-    const storedAccessToken = JSON.parse(localStorage.getItem('zerodhaUserAT') || '{}');
-
-    console.log("Stored credentials:", storedCredentials);
-    console.log("Stored access token:", storedAccessToken);
-
-    if (storedCredentials.apiKey && storedAccessToken.access_token) {
-      console.log("Setting API key and access token...");
-      setApiKey(storedCredentials.apiKey);
-      setAccessToken(storedAccessToken.access_token);
-    } else {
-      console.log("No valid credentials found in localStorage.");
-    }
-  };
-
   useEffect(() => {
-    console.log("Fetching credentials from localStorage...");
-    const storedCredentials = JSON.parse(localStorage.getItem('zerodhaCredentials') || '{}');
-    const storedAccessToken = JSON.parse(localStorage.getItem('zerodhaUserAT') || '{}');
-
-    console.log("Stored credentials:", storedCredentials);
-    console.log("Stored access token:", storedAccessToken);
-
-    if (storedCredentials.apiKey && storedAccessToken.access_token) {
-      console.log("Setting API key and access token...");
-      setApiKey(storedCredentials.apiKey);
-      setAccessToken(storedAccessToken.access_token);
-    } else {
-      console.log("No valid credentials found in localStorage.");
-    }
-
-    const fetchData = async () => {
+    const initializeData = async () => {
       setLoading(true);
-      await handleProfileData('getProfile');
-      await handleFundsData('getFunds');
-      await handleHoldingsData('getHoldings');
-      await handlePositionsData('getPositions');
-      await handleOrdersData('getOrders');
+      
+      // Set credentials in state if needed
+      const { apiKey: key, accessToken: token } = getCredentials();
+      if (key && token) {
+        setApiKey(key);
+        setAccessToken(token);
+      }
+      
+      // Fetch all data in parallel
+      const fetchPromises = [
+        fetchBrokerData('getProfile', setProfileData),
+        fetchBrokerData('getFunds', setFundsData),
+        fetchBrokerData('getHoldings', setHoldingsData),
+        fetchBrokerData('getPositions', setPositionsData),
+        fetchBrokerData('getOrders', setOrdersData)
+      ];
+      
+      await Promise.all(fetchPromises);
       setLoading(false);
     };
     
-    fetchData();
+    initializeData();
   }, []);
-
   return (
     <div className="max-w-7xl mx-auto p-4 space-y-6">
       <ThemeWrapper selectedBroker={selectedBroker} />
