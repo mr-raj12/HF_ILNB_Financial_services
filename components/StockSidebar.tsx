@@ -39,24 +39,24 @@ export default function StockSidebar() {
   const filteredStocks = stocks.filter(stock => stock.name.toLowerCase().includes(search.toLowerCase()));
 
   return (
-    <div className="w-[300px] border-r bg-white shadow-md p-4 space-y-4">
+    <div className="w-[340px] border-r bg-white shadow-md p-4 space-y-4">
       <Input
         placeholder="Search stocks..."
         value={search}
         onChange={e => setSearch(e.target.value)}
         className="rounded-xl"
       />
-
+  
       <Card className="p-4 bg-gradient-to-br from-green-100 to-green-300">
         <h2 className="font-bold text-sm mb-2">NIFTY 50</h2>
         <p className="text-lg font-semibold">22,450.30 <span className="text-green-600">+0.65%</span></p>
       </Card>
-
+  
       <Card className="p-4 bg-gradient-to-br from-blue-100 to-blue-300">
         <h2 className="font-bold text-sm mb-2">SENSEX</h2>
         <p className="text-lg font-semibold">74,320.85 <span className="text-green-600">+0.78%</span></p>
       </Card>
-
+  
       <ScrollArea className="h-[60vh] pr-2">
         {filteredStocks.map(stock => (
           <div key={stock.name} className="flex justify-between items-center border-b py-2">
@@ -66,7 +66,9 @@ export default function StockSidebar() {
                 {stock.change >= 0 ? '+' : ''}{stock.change}%
               </p>
             </div>
-            <p className="font-semibold">₹{stock.price}</p>
+            <p className={`font-semibold ${stock.change >= 0 ? 'text-green-700' : 'text-red-600'}`}>
+              ₹{stock.price}
+            </p>
           </div>
         ))}
         {filteredStocks.length === 0 && <Skeleton className="h-6 w-full" />}

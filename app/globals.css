@@ -73,6 +73,22 @@
   }
 }
 
+body.zerodha-theme {
+  --primary-bg: #fff8f8;
+  --primary-text: #2e0507;
+  --card-gradient-start: #ffb3ab; /* soft coral pink */
+  --card-gradient-end: #f1696d;   /* softened E33F44 tone */
+  --accent: #E33F44;
+}
+
+body.upstox-theme {
+  --primary-bg: #f8f5ff;
+  --primary-text: #1f1044;
+  --card-gradient-start: #bda9f4; /* soft violet */
+  --card-gradient-end: #7f5de5;   /* softened 5724C9 tone */
+  --accent: #5724C9;
+}
+
 @layer base {
   * {
     @apply border-border;
